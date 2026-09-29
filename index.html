@@ -1,105 +1,480 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Algebra Studio · Sophia</title>
 <style>
+:root{--bg:#f6f4ee;--card:#fff;--ink:#1d2640;--muted:#5f6778;--line:#e4e0d5;--soft:#f7f8fb;--blue:#2f55d4;--blue-d:#2445b0;--blue-soft:#eaf0ff;--hl:#ffe08a;--good:#1f7a4d;--good-soft:#e7f5ec;--warn:#7a5000;--warn-soft:#fff4dc;--bad:#c2410c;--ghost:#e08a00;--ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;--serif:"Cambria Math","STIX Two Math",Georgia,serif}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:16px/1.5 var(--ui);background-color:var(--bg);background-image:linear-gradient(#e9e6dc 1px,transparent 1px),linear-gradient(90deg,#e9e6dc 1px,transparent 1px);background-size:28px 28px;background-attachment:fixed}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+button{min-height:44px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 16px;font-weight:600;font-size:14px;transition:border-color .15s,background .15s}
+@media(hover:hover){button:hover:not(:disabled){border-color:var(--blue);background:var(--blue-soft)}.mode.active:hover:not(:disabled){background:#28335a;border-color:#28335a}.primary:hover:not(:disabled){background:var(--blue-d);border-color:var(--blue-d)}}button:disabled{color:#9097a5;background:#f3f3f0;cursor:default}
+:focus-visible{outline:3px solid var(--hl);outline-offset:2px}[hidden]{display:none!important}
+var{font:italic 1.05em var(--serif)}
+.wrap{max-width:1240px;margin:auto;padding:20px 28px 32px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:12px;background:var(--ink);color:#fff;display:grid;place-items:center;font:700 22px var(--serif);font-style:italic;box-shadow:3px 3px 0 var(--hl)}
+.brand b{display:block;font-size:15px;letter-spacing:.02em}.brand small{display:block;font-size:12px;color:var(--muted)}
+.hero{padding:26px 0 22px}.eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:var(--blue-soft);padding:4px 10px;border-radius:999px}
+h1{font:700 34px/1.15 var(--ui);letter-spacing:-.8px;margin:12px 0 8px}h1 mark{background:linear-gradient(transparent 58%,var(--hl) 58%);color:inherit;padding:0 2px}
+.sub{font-size:15px;color:var(--muted);margin:0;max-width:70ch}
+.layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:24px;align-items:start}.layout>*,.settings>*,#form>*{min-width:0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}
+.group{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 4px 8px}.group:first-child{margin-top:0}
+.modes{display:grid;gap:4px}
+.mode{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;border-color:transparent;background:transparent;padding:7px 10px;min-height:0;font-size:14px}
+.mode i{flex:none;width:26px;height:26px;border-radius:8px;background:var(--soft);border:1px solid var(--line);display:grid;place-items:center;font:italic 600 13px var(--serif)}
+.mode small{display:block;font-size:12px;font-weight:400;color:var(--muted);line-height:1.4;margin-top:1px}
+.mode.star{background:#fffaf0;border-color:#f3dfae}.mode.star i{background:var(--hl);border-color:#e9c85c}
+.mode.active{background:var(--ink);border-color:var(--ink);color:#fff}.mode.active small{color:#c9cfdd}.mode.active i{background:#fff;color:var(--ink);border-color:#fff}
 
-:root{--ink:#243b33;--muted:#58695f;--green:#265d49;--paper:#f5f5ef;--line:#d9e0d7;--orange:#bc7426;--ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--ui)}button,input,select,textarea{font:inherit}button,select{cursor:pointer}button{min-height:44px;border:1px solid var(--line);background:white;color:var(--ink);border-radius:9px;padding:10px 16px;font-weight:600;font-size:14px;transition:border-color .15s}button:hover:not(:disabled){border-color:var(--green);background:#edf3ed}button:disabled{color:#728077;background:#f3f5f0;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--orange);outline-offset:3px}[hidden]{display:none!important}
-.wrap{max-width:1240px;margin:auto;padding:24px 32px 28px}header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:20px;border-bottom:1px solid var(--line)}.brand{font-size:14px;font-weight:700;letter-spacing:.08em}.badge{background:#e9efe4;white-space:nowrap}.intro{display:flex;align-items:center;justify-content:space-between;padding:28px 0 24px}.eyebrow{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}h1{font:650 32px/1.2 var(--ui);letter-spacing:-.8px;margin:8px 0}p{line-height:1.6}.sub{font-size:14px;color:var(--muted);margin:0}.stamp{display:none}.layout{display:grid;grid-template-columns:248px minmax(0,1fr);gap:24px;align-items:start}.panel{padding:20px 0;background:transparent}.label{display:block;font-size:14px;font-weight:600;letter-spacing:0;color:var(--ink);margin:0 0 12px}.modes{display:grid;gap:8px}.mode{text-align:left;font-size:14px;padding:12px 14px;background:transparent;border-color:transparent}.mode small{display:block;font-size:12px;line-height:1.5;font-weight:400;color:var(--muted);margin-top:4px}.mode.active{background:var(--green);border-color:var(--green);color:white}.mode.active:hover:not(:disabled){background:#204f3e;color:white}.mode.active small{color:#e3eee5}.divider{height:1px;background:var(--line);margin:24px 0}select{width:100%;min-height:46px;border:1px solid #b9c6ba;border-radius:8px;padding:10px 8px;background:#fff;color:var(--ink);font-size:14px;margin-bottom:24px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stat b{font:600 28px/1.3 var(--ui);font-variant-numeric:tabular-nums;display:block}.stat span{display:block;font-size:12px;color:var(--muted);margin-top:4px}.note{font-size:13px;line-height:1.7;color:var(--muted);margin:24px 0 0;max-width:29ch}
-.sheet{border:1px solid var(--line);background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 18px #20382c06}.sheetbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px;font-size:13px;font-weight:600}.topic{background:#eef2e8;border-radius:6px;padding:5px 10px;color:#39513f;font-weight:500}.progress{height:4px;background:#edf1e9}.progress div{height:100%;background:#6d946a;transition:width .2s}.exercise{padding:24px}.prompt{font-size:18px;font-weight:600;line-height:1.45;margin:0 0 5px}.equation{font-family:"Cambria Math",serif;font-size:36px;line-height:1.8;margin:16px 0 24px;padding:16px 20px;background:#f6f8f2;border-radius:10px;overflow-x:auto;min-width:0}math{font-family:"Cambria Math","STIX Two Math",serif}
-#form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 24px;align-items:start}.answer-row{display:flex;align-items:center;gap:12px;grid-column:1;grid-row:1;margin-top:30px}.answer-row label{font:italic 26px/1.2 Georgia,serif;white-space:nowrap;flex:none}.answer-row input{width:100%;min-width:0;min-height:50px;border:1px solid #acbdad;border-radius:8px;padding:10px 12px;font-size:18px;background:white;color:var(--ink)}.answer-row input:disabled{background:#f1f6ef}.help{font-size:12px;line-height:1.6;color:var(--muted);margin:10px 0 0}#inputhelp{grid-column:1;grid-row:2}.choices{grid-column:1;grid-row:1 / span 2;display:grid;grid-template-columns:1fr 1fr;gap:8px}.choice{min-width:0;min-height:88px;padding:12px 8px;text-align:center;overflow-x:auto;font:20px/1.6 Georgia,serif}.choice math{font-size:1em}.choice.selected{border:2px solid var(--green);background:#eaf2e6;padding:11px 7px}.workbox{grid-column:2;grid-row:1 / span 3;min-width:0}.workbox .label{margin-bottom:8px}.workbox textarea{display:block;width:100%;resize:vertical;min-height:176px;border:1px solid #b9c6b8;border-radius:8px;padding:12px;font:15px/28px ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--ink);background:repeating-linear-gradient(#fdfcf7,#fdfcf7 27px,#e4e8dc 27px,#e4e8dc 28px);background-position:0 13px}.workbox textarea::placeholder,input::placeholder{color:#68756b;opacity:1}.actions{display:flex;gap:8px;flex-wrap:wrap;grid-column:1;grid-row:3;align-self:end;margin-top:24px}.primary{background:var(--green);color:white;border-color:var(--green)}.primary:hover:not(:disabled){background:#204f3e;color:white}.actions .primary{width:100%}.actions button:not(.primary){flex:1}.feedback{margin:20px 0 0;padding:14px 16px;border-radius:8px;color:#654816;background:#fcf2de;font-size:14px;line-height:1.6}.feedback.good{color:#28512e;background:#edf5e7}.feedback:empty{display:none}
-.solution{margin:0 24px 24px;border-left:3px solid #6d946a;padding:16px 20px;background:#f4f7ef;border-radius:0 8px 8px 0}.solution h3{font-size:14px;font-weight:600;letter-spacing:0;margin:0 0 12px}.solution p{font-size:14px;line-height:1.8;margin:10px 0;overflow-x:auto}.solution math{font-size:1.2em;vertical-align:middle;margin:6px 3px}.bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding:16px 24px;background:#fcfdf9}.quiet{background:transparent;font-size:13px;padding:9px 10px}.navigation{display:flex;align-items:center;gap:10px}#position{font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted);min-width:40px;text-align:center;white-space:nowrap}.footer{font-size:12px;line-height:1.7;color:var(--muted);max-width:760px;margin:24px auto 0;text-align:center}
-@media(max-width:1060px){.wrap{padding:20px 24px}.layout{grid-template-columns:210px minmax(0,1fr);gap:20px}.choices{grid-template-columns:1fr}.choice{min-height:72px}.workbox textarea{min-height:220px}.navigation{gap:6px}.navigation button{padding:10px}.bottom{padding:16px}}
-@media(max-width:780px){.wrap{padding:16px}.intro{padding:20px 0}h1{font-size:28px}.layout{grid-template-columns:1fr;gap:20px}.panel{padding:0}.modes{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.mode{padding:10px 8px;text-align:center;line-height:1.4}.mode small{display:none}.panel>.label{margin-bottom:8px}.settings{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;margin-top:16px}.settings .label{font-size:13px;margin-bottom:8px}.settings select{margin-bottom:0}.stats{gap:8px}.stat b{font-size:23px}.stat span{font-size:11px}.divider,.note{display:none}.exercise{padding:20px}.sheetbar{padding:14px 20px}.equation{font-size:32px}.workbox textarea{min-height:176px}.choices{grid-template-columns:1fr 1fr}.solution{margin:0 20px 20px}.footer{margin-top:20px}}
-@media(max-width:540px){header{gap:8px;padding-bottom:16px}.brand{font-size:12px;letter-spacing:.02em}.badge{font-size:12px;padding:8px 10px;white-space:normal}.intro .sub{font-size:13px}.eyebrow{font-size:12px}.mode{font-size:13px}.settings{gap:12px}.sheetbar{font-size:12px;padding:12px 16px}.topic{font-size:11px;max-width:58%;text-align:right}.exercise{padding:16px}.prompt{font-size:17px}.equation{font-size:30px;padding:14px 12px;margin:16px 0 20px}#form{display:flex;flex-direction:column;gap:0}#form>*{width:100%}.answer-row{margin-top:0}.choices{display:grid;grid-template-columns:1fr 1fr}.choice{font-size:19px;min-height:84px}.workbox{margin-top:24px}.workbox textarea{min-height:160px}.actions{margin-top:20px}.actions .primary{width:100%;flex:auto}.actions button:not(.primary){flex:1;padding:10px 8px}.bottom{flex-wrap:wrap;padding:12px 16px;gap:10px}.quiet{order:2;width:100%;min-height:36px}.navigation{width:100%;justify-content:space-between}.navigation button{min-width:96px}.solution{margin:0 16px 16px;padding:12px 14px}.footer{font-size:11px;text-align:left}.help{font-size:12px}}
+.label{display:block;font-size:13px;font-weight:700;margin:0 0 8px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{min-height:44px;padding:4px 2px;border:0;background:transparent;font-size:15px;line-height:1.1;border-radius:8px;white-space:nowrap}.seg button small{display:block;font-size:10px;font-weight:500;color:var(--muted)}.seg button.on small{color:var(--blue)}.seg button.on{background:var(--card);box-shadow:0 1px 3px #1d264022;color:var(--blue)}
+.divider{height:1px;background:var(--line);margin:18px 0}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:var(--soft);border-radius:10px;padding:10px 12px}.stat b{font:700 24px/1.2 var(--ui);font-variant-numeric:tabular-nums;display:block}.stat span{font-size:12px;color:var(--muted)}
+.tips{margin-top:16px;background:#fffaf0;border:1px solid #f3dfae;border-radius:12px;padding:12px 14px;font-size:13px}.tips summary{font-weight:700;cursor:pointer}.tips ul{margin:10px 0 0;padding-left:18px;color:#4a4636}.tips li{margin:6px 0;line-height:1.5}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px #1d264010}
+.sheetbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px;font-size:13px;font-weight:700;letter-spacing:.04em}
+.topic{background:var(--blue-soft);color:var(--blue-d);border-radius:999px;padding:4px 12px;font-weight:600;letter-spacing:0}
+.progress{height:5px;background:#eef0f5}.progress div{height:100%;background:linear-gradient(90deg,var(--blue),#6b8cff);transition:width .25s}
+.exercise{padding:24px}
+.prompt{font-size:19px;font-weight:650;line-height:1.45;margin:0}.cond{font-size:14px;color:var(--muted);margin:4px 0 0}
+.equation{font-family:var(--serif);font-size:32px;line-height:1.7;margin:16px 0 22px;padding:14px 20px;background:var(--soft);border:1px dashed #cfd6e6;border-radius:12px;overflow-x:auto;overflow-y:hidden}
+.equation.text{font-size:26px}
+.story{margin:16px 0 22px;padding:16px 20px;background:#fffdf6;border-left:4px solid var(--hl);border-radius:0 12px 12px 0;font-size:16px;line-height:1.7}
+.graphwrap{margin:16px 0 22px;display:flex;justify-content:center}
+svg.graph{width:100%;max-width:420px;height:auto;display:block;background:#fff;border:1px solid var(--line);border-radius:12px;touch-action:manipulation}
+svg.graph.clickable{cursor:crosshair}
+.g-grid{stroke:#e6eaf2;stroke-width:1}.g-axis{stroke:#5f6778;stroke-width:1.6}.g-tick{font:12px var(--ui);fill:#5f6778}
+.g-line{stroke:var(--ink);stroke-width:2.6;fill:none}.g-user{stroke:var(--blue)}.g-good{stroke:var(--good)}.g-ghost{stroke:var(--ghost);stroke-dasharray:7 6}
+.g-pt{fill:var(--ink)}.g-upt{fill:var(--blue);stroke:#fff;stroke-width:2}.g-gpt{fill:var(--good);stroke:#fff;stroke-width:2}.g-label{font:700 13px var(--ui);fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:5px}
+.g-hover{fill:var(--blue);opacity:.25}
+math{font-family:var(--serif)}
+#form{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0 24px;align-items:start}
+.fields{display:grid;gap:16px}
+.field{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;transition:border-color .15s,background .15s}
+.field.good{border-color:#9fd3b5;background:var(--good-soft)}.field.bad{border-color:#f0b48f;background:#fff7f1}
+.field>.flabel{display:flex;gap:8px;align-items:baseline;font-size:14px;font-weight:600;margin-bottom:8px}
+.part{flex:none;font-size:11px;font-weight:700;background:var(--ink);color:#fff;border-radius:6px;padding:1px 7px}
+.field.good .part{background:var(--good)}
+.inrow{display:flex;align-items:center;gap:8px}.inrow .pre{font:italic 22px var(--serif);white-space:nowrap}
+.field input{width:100%;min-width:0;min-height:48px;border:1px solid #b9c2d6;border-radius:9px;padding:10px 12px;font-size:18px;background:#fff}
+.field input:disabled{background:transparent;border-color:#9fd3b5;color:var(--good)}
+.preview{min-height:30px;margin-top:6px;font-size:20px;color:var(--blue-d);overflow-x:auto;overflow-y:hidden;padding-block:4px}.preview:empty::before{content:"Preview shows here";font:13px var(--ui);color:#7d8494}
+.help{font-size:12px;line-height:1.55;color:var(--muted);margin:8px 0 0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choice{min-height:80px;padding:10px 8px;text-align:center;overflow-x:auto;overflow-y:hidden;font:20px/1.6 var(--serif)}
+.choice.selected{border:2px solid var(--blue);background:var(--blue-soft);padding:9px 7px}.field.bad .choice.selected{border-color:var(--bad);background:#fff7f1}.field.flat{border:0;padding:0;background:none}.cur{font:600 18px var(--ui);font-style:normal}
+.gtools{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--muted)}.gtools button{min-height:34px;padding:6px 12px;font-size:12px}
+.workbox .label{margin-bottom:8px}
+.workbox textarea{display:block;width:100%;resize:vertical;min-height:200px;border:1px solid #c9cfdc;border-radius:10px;padding:12px;font:15px/28px ui-monospace,SFMono-Regular,Consolas,monospace;background:repeating-linear-gradient(#fdfdfb,#fdfdfb 27px,#e7ebf3 27px,#e7ebf3 28px);background-position:0 13px}
+.workbox textarea::placeholder,input::placeholder{color:#8a91a0;opacity:1}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.primary{background:var(--blue);color:#fff;border-color:var(--blue);width:100%}.primary:disabled{background:#c5cbe0;border-color:#c5cbe0;color:#fff}
+.actions button:not(.primary){flex:1}
+.feedback{margin:16px 0 0;padding:14px 16px;border-radius:10px;color:var(--warn);background:var(--warn-soft);font-size:14px;line-height:1.6}.feedback.good{color:var(--good);background:var(--good-soft)}.feedback:empty{display:none}
+.feedback p{margin:0}.feedback p+p{margin-top:6px}
+.solution{margin:16px 0 0;border-left:4px solid var(--blue);padding:14px 20px;background:var(--blue-soft);border-radius:0 12px 12px 0}
+.solution h3{font-size:14px;margin:0 0 8px}.solution p{font-size:15px;line-height:2;margin:8px 0;overflow-x:auto;overflow-y:hidden;padding-block:4px}.solution math{font-size:1.15em;vertical-align:middle;margin:0 2px}
+.bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding:14px 24px;background:#fbfbf8}
+.quiet{background:transparent;font-size:13px;padding:8px 10px}
+.navigation{display:flex;align-items:center;gap:10px}#position{font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted);min-width:44px;text-align:center}
+.footer{font-size:12px;color:var(--muted);max-width:760px;margin:22px auto 0;text-align:center;line-height:1.7}
+@media(max-width:1060px){.wrap{padding:18px 20px}.layout{grid-template-columns:230px minmax(0,1fr);gap:18px}#form{grid-template-columns:1fr}.workbox{margin-top:18px}.workbox textarea{min-height:140px}}
+@media(max-width:780px){
+ .layout{grid-template-columns:1fr}.panel{position:static;padding:14px;max-height:none}
+ #modes{display:flex;flex-wrap:wrap;gap:6px}#modes .modes{display:contents}.mode{flex:none;width:auto;align-items:center;border-color:var(--line);background:var(--card);padding:8px 12px}.mode small{display:none}
+ .group{display:none}.settings{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end}.divider{margin:14px 0}.tips{display:none}
+ h1{font-size:27px}.hero{padding:18px 0}.exercise{padding:18px}.sheetbar{padding:12px 18px}.equation{font-size:28px}}
+@media(max-width:540px){.wrap{padding:14px 16px}#modes{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}.settings{grid-template-columns:1fr}.settings>div:last-child{display:none}.hero .sub{display:none}.hero{padding:12px 0 14px}h1{font-size:23px;margin:8px 0 0}.top button{font-size:13px;padding:8px 12px}.g-tick{font-size:14px}.brand small{display:none}.sheetbar{font-size:11px}.topic{font-size:11px;text-align:right}.equation{font-size:24px;padding:12px}.equation.text{font-size:20px}.choice{font-size:18px}
+ .bottom{flex-wrap:wrap;padding:12px 16px}.quiet{order:2;width:100%}.navigation{width:100%;justify-content:space-between}.navigation button{min-width:96px}.footer{text-align:left}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
-
 </style></head><body><main class="wrap">
-<header><div class="brand">S / ALGEBRA STUDIO</div><button class="badge" id="newset">New set · 10 questions ↻</button></header>
-<section class="intro"><div><div class="eyebrow">Sophia’s practice notebook</div><h1>Algebra practice</h1><p class="sub">Algebra 1 · One step at a time. Keep both sides balanced.</p></div><div class="stamp">x = ?</div></section>
-<div class="layout"><aside class="panel"><div class="label">Practice mode</div><div class="modes"><button class="mode active" data-mode="equation">Solve equations<small>Find x · Type your answer</small></button><button class="mode" data-mode="formula">Rearrange formulas<small>Choose an equivalent formula</small></button><button class="mode" data-mode="mixed">A little of both<small>Mix equations and formulas</small></button></div><div class="divider"></div><div class="settings"><div><label class="label" for="level">Difficulty</label><select id="level"><option value="1">1 · Warm-up</option><option value="2">2 · Build up</option><option value="3">3 · Challenge</option></select></div><div><div class="label">This set</div><div class="stats"><div class="stat"><b id="solved">0</b><span>Completed</span></div><div class="stat"><b id="accuracy">—</b><span>First-try accuracy</span></div></div></div></div><p class="note">10 unique questions per set. No timer.<br>Use the workbox to show your thinking, and open a hint when you need one. Take a little break after every 10 questions.</p></aside>
-<section class="sheet"><div class="sheetbar"><span id="number">QUESTION 01</span><span class="topic" id="topic"></span></div><div class="progress"><div id="progress" style="width:0%"></div></div><div class="exercise"><p class="prompt" id="prompt"></p><p class="sub" id="condition"></p><div class="equation" id="equation"></div><form id="form"><div class="answer-row" id="numeric"><label for="answer">x =</label><input id="answer" inputmode="text" autocomplete="off" placeholder="Your answer" aria-label="Value of x"></div><div class="help" id="inputhelp">Enter an integer, decimal, or fraction, such as −3, 0.5, or 1/2.</div><div class="choices" id="choices" hidden></div><div class="workbox"><label for="work" class="label">Workbox</label><textarea id="work" rows="5" spellcheck="false" placeholder="Write one step per line…&#10;Example: subtract 3 from both sides"></textarea><p class="help">Show each step. Your notes stay with this question.</p></div><div class="actions"><button class="primary" type="submit" id="check">Check answer ✓</button><button type="button" id="hint">Hint</button><button type="button" id="show">See steps</button></div></form><div id="feedback" class="feedback" role="status" aria-live="polite"></div></div><div id="solution" class="solution" hidden><h3 id="solutionTitle"></h3><div id="steps"></div></div><div class="bottom"><button class="quiet" id="review" disabled>Review practice (0)</button><div class="navigation"><button id="previous" disabled>← Previous</button><span id="position" aria-live="polite"></span><button id="next">Next →</button></div></div></section></div><div class="footer">Keep the balance. Whatever you do to one side, do to the other. Questions are generated on your device. Progress lasts for this set. New set, mode, or difficulty changes start a fresh set of 10.</div></main>
+<header class="top"><div class="brand"><div class="logo">S</div><div><b>ALGEBRA STUDIO</b><small>Sophia’s practice notebook</small></div></div><button id="newset" style="white-space:nowrap">↻ New set of 10</button></header>
+<section class="hero"><span class="eyebrow">Chapter 2 · Linear equations</span><h1>Get ready for <mark>Quiz 2-1 &amp; 2-2</mark></h1><p class="sub">Slope, slope-intercept and point-slope form, graphs, standard form and word problems. Ten questions per set, no timer. Show your work, check each answer, and open a hint if you get stuck.</p></section>
+<div class="layout">
+<aside class="panel">
+ <div id="modes"></div>
+ <div class="divider"></div>
+ <div class="settings">
+  <div><div class="label">Difficulty</div><div class="seg" id="levels"><button data-level="1">1<small>Warm-up</small></button><button data-level="2">2<small>Build up</small></button><button data-level="3">3<small>Challenge</small></button></div></div>
+  <div><div class="label" style="margin-top:14px">This set</div><div class="stats"><div class="stat"><b id="solved">0</b><span>Completed</span></div><div class="stat"><b id="accuracy">—</b><span>First try</span></div></div></div>
+ </div>
+ <details class="tips"><summary>✎ Watch-outs from your practice quiz</summary><ul>
+  <li>A fraction slope stays a fraction: <b>−3/2</b> is not −32.</li>
+  <li>Point-slope signs flip: the point (−3, −4) gives <b>y + 4 = m(x + 3)</b>.</li>
+  <li>Standard form: solve for <var>y</var> by dividing <b>every</b> term. 6x + 3y = 6 → y = −2x + 2.</li>
+  <li>Find <var>b</var> by plugging in one point. Check with the other point.</li>
+  <li>A slope of 0 means a flat line: <b>y = b</b>.</li>
+ </ul></details>
+</aside>
+<section class="sheet">
+ <div class="sheetbar"><span id="number">QUESTION 01</span><span class="topic" id="topic"></span></div>
+ <div class="progress"><div id="progress" style="width:0%"></div></div>
+ <div class="exercise">
+  <p class="prompt" id="prompt"></p><p class="cond" id="condition"></p>
+  <div id="display"></div>
+  <form id="form" autocomplete="off">
+   <div><div class="fields" id="fields"></div>
+    <div class="actions"><button class="primary" type="submit" id="check">Check answer ✓</button><button type="button" id="hint">Hint</button><button type="button" id="show">See steps</button></div>
+    <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+    <div id="solution" class="solution" hidden><h3 id="solutionTitle"></h3><div id="steps"></div></div></div>
+   <div class="workbox"><label for="work" class="label">Workbox</label><textarea id="work" rows="6" spellcheck="false" placeholder="Write one step per line…&#10;m = (5 − 1) / (4 − 2) = 2"></textarea><p class="help">Show your steps here, just like on paper. Your notes stay with this question.</p></div>
+  </form>
+  </div>
+ <div class="bottom"><button class="quiet" id="review" disabled>Review mistakes (0)</button><div class="navigation"><button id="previous" disabled>← Previous</button><span id="position" aria-live="polite"></span><button id="next">Next →</button></div></div>
+</section></div>
+<div class="footer">Questions are made on this device, so every set is new. Take a short break after every 10.</div>
+</main>
 <script>
 'use strict';
 
-// Native MathML keeps textbook-style fractions available offline.
+// ---------- MathML rendering (works offline, textbook-style fractions) ----------
 function mathMarkup(source){
- const tokens=source.replaceAll('−','-').match(/\d+(?:\.\d+)?|[A-Za-z]|[()+\-×*/=]/g)||[];
+ const tokens=source.replace(/[−–]/g,'-').match(/\d+(?:\.\d+)?|[A-Za-z]|[()+\-×*·/=]/g)||[];
  let pos=0;
  const row=x=>'<mrow>'+x+'</mrow>',op=x=>'<mo>'+x+'</mo>';
- function atom(){const t=tokens[pos++];if(t==='('){const inner=sum();if(tokens[pos++]!==')')throw Error('Unclosed group');return {html:row(op('(')+inner.html+op(')')),inner:inner.html};}if(t==='-'||t==='+')return {html:row(op(t==='-'?'−':t)+atom().html)};if(!t)throw Error('Missing operand');return {html:/^\d/.test(t)?'<mn>'+t+'</mn>':'<mi>'+t+'</mi>'};}
- function product(){let a=atom();while(pos<tokens.length){const t=tokens[pos];if(t==='/'||t==='*'||t==='×'){pos++;const b=atom();a={html:t==='/'?'<mfrac>'+row(a.inner||a.html)+row(b.inner||b.html)+'</mfrac>':row(a.html+op('×')+b.html)};}else if(t==='('||/^[A-Za-z0-9]/.test(t)){const b=atom();a={html:row(a.html+op('&#x2062;')+b.html)};}else break;}return a;}
- function sum(){let a=product();while(tokens[pos]==='+'||tokens[pos]==='-'){const t=tokens[pos++],b=product();a={html:row(a.html+op(t==='-'?'−':t)+b.html)};}return a;}
+ function atom(){const t=tokens[pos++];if(t==='('){const inner=sum();if(tokens[pos++]!==')')throw Error('Unclosed group');return {html:row('<mo lspace="0" rspace="0">(</mo>'+inner.html+'<mo lspace="0" rspace="0">)</mo>'),inner:inner.html};}if(t==='-'||t==='+')return {html:row(op(t==='-'?'−':t)+atom().html)};if(!t)throw Error('Missing operand');return {html:/^\d/.test(t)?'<mn>'+t+'</mn>':'<mi>'+t+'</mi>'};}
+ function product(){let a=atom();while(pos<tokens.length){const t=tokens[pos];if(t==='/'||t==='*'||t==='×'||t==='·'){pos++;const b=atom();a={html:t==='/'?'<mfrac>'+row(a.inner||a.html)+row(b.inner||b.html)+'</mfrac>':row(a.html+op('×')+b.html)};}else if(t==='('||/^[A-Za-z0-9]/.test(t)){const b=atom();a={html:row(a.html+op('&#x2062;')+b.html)};}else break;}return a;}
+ function sum(){let lead='';if(tokens[pos]==='-'||tokens[pos]==='+'){lead=op(tokens[pos]==='-'?'−':'+');pos++;}let a=product();if(lead)a={html:row(lead+a.html)};while(tokens[pos]==='+'||tokens[pos]==='-'){const t=tokens[pos++],b=product();a={html:row(a.html+op(t==='-'?'−':t)+b.html)};}return a;}
  let result=sum().html;while(tokens[pos]==='='){pos++;result+=op('=')+sum().html;}if(pos!==tokens.length)throw Error('Unexpected token');
  return '<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mstyle displaystyle="true">'+row(result)+'</mstyle></math>';
 }
-function escapeText(s){return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');}
-function stepMarkup(text){
- const prefix='An equivalent form is ';
- let split=text.indexOf(': '),start=split>=0?split+2:text.startsWith(prefix)?prefix.length:0;
- const candidate=text.slice(start).replace(/\.$/,'');
- if(candidate.includes('=')&&/^[\dA-Za-z\s()+−×*/=.\-]+$/.test(candidate))return escapeText(text.slice(0,start))+mathMarkup(candidate);
- return escapeText(text);
-}
+const escapeText=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+// Text with {{math}} segments. Dollar signs stay plain text for money.
+function rich(text){return String(text).split(/\{\{|\}\}/).map((s,i)=>{if(i%2===0)return s;try{return mathMarkup(s);}catch(e){return escapeText(s);}}).join('');}
 
+// ---------- helpers ----------
 const $=id=>document.getElementById(id),ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,pick=a=>a[ri(0,a.length-1)],shuffle=a=>a.map(v=>({v,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.v);
+const nz=(a,b)=>{let v;do v=ri(a,b);while(v===0);return v;};
+const neg=n=>(n<0?'−':'')+fmtN(Math.abs(n)),par=n=>n<0?'('+neg(n)+')':neg(n);
+const fmtN=n=>String(Math.round(n*1000)/1000);
+const money=n=>'$'+(Number.isInteger(n)?n:n.toFixed(2));
 const signed=n=>n<0?' − '+Math.abs(n):' + '+n,term=(a,v='x')=>a===1?v:a===-1?'−'+v:a+v;
-let mode='equation',level=1,q,sequence=0,selected=null,hints=0,attempted=false,done=false,assisted=false,total=0,firstCorrect=0,completed=0,mistakes=[];
-function equation(l){const x=ri(-9,9),a=ri(2,9),b=pick([-1,1])*ri(1,12);let e,steps;
-if(l===1){if(Math.random()<.5){e='x'+signed(b)+' = '+(x+b);steps=[`${b>0?'Subtract':'Add'} ${Math.abs(b)} ${b>0?'from':'to'} both sides.`,`x = ${x+b}${signed(-b)} = ${x}`];}else{e=term(a)+' = '+a*x;steps=[`Divide both sides by ${a}.`,`x = ${a*x} / ${a} = ${x}`];}}
-else if(l===2){e=term(a)+signed(b)+' = '+(a*x+b);steps=[`${b>0?'Subtract':'Add'} ${Math.abs(b)} ${b>0?'from':'to'} both sides to remove the constant term.`,`${term(a)} = ${a*x}`,`Divide both sides by ${a}: x = ${x}`];}
-else if(Math.random()<.5){e=`${a}(x${signed(b)}) = ${a*(x+b)}`;steps=[`Divide both sides by ${a}.`,`x${signed(b)} = ${x+b}`,`${b>0?'Subtract':'Add'} ${Math.abs(b)} ${b>0?'from':'to'} both sides: x = ${x}`];}
-else{const c=a+ri(1,5),d=(a-c)*x+b;e=term(a)+signed(b)+' = '+term(c)+signed(d);steps=[`Subtract ${term(a)} from both sides.`,`${b} = ${term(c-a)}${signed(d)}`,`${d>=0?'Subtract':'Add'} ${Math.abs(d)} ${d>=0?'from':'to'} both sides: ${b-d} = ${term(c-a)}`,`Divide both sides by ${c-a}: x = ${x}`];}
-return {type:'equation',label:l===1?'One-step equations':l===2?'Two-step equations':'Multi-step equations',e,answer:x,steps,condition:'Solve for x.'};}
-function classicFormula(l){let f;if(l===1){const k=ri(2,9);f=pick([{e:`y = x + ${k}`,target:'x',right:`x = y − ${k}`,wrong:[`x = y + ${k}`,`x = ${k} − y`,`x = y / ${k}`],steps:[`Subtract ${k} from both sides.`,`x = y − ${k}`]},{e:'A = l × w',target:'w',right:'w = A / l',wrong:['w = A × l','w = l / A','w = A − l'],condition:'Assume l ≠ 0.',steps:['Divide both sides by l.','w = A / l']},{e:`y = x / ${k}`,target:'x',right:`x = ${k}y`,wrong:[`x = y / ${k}`,`x = ${k} / y`,`x = y − ${k}`],steps:[`Multiply both sides by ${k}.`,`x = ${k}y`]}]);}
-else if(l===2){f=pick([{e:'y = mx + b',target:'x',right:'x = (y − b) / m',wrong:['x = y − b / m','x = (y + b) / m','x = m(y − b)'],condition:'Assume m ≠ 0.',steps:['Subtract b from both sides: y − b = mx.','Divide both sides by m: x = (y − b) / m.','The entire expression in the numerator is divided by m.']},{e:'v = u + at',target:'t',right:'t = (v − u) / a',wrong:['t = (v + u) / a','t = a(v − u)','t = v − u / a'],condition:'Assume a ≠ 0.',steps:['Subtract u from both sides: v − u = at.','Divide both sides by a: t = (v − u) / a.']}]);}
-else{f=pick([{e:'P = 2l + 2w',target:'w',right:'w = (P − 2l) / 2',wrong:['w = P − l','w = (P − l) / 2','w = (P + 2l) / 2'],steps:['Subtract 2l from both sides: P − 2l = 2w.','Divide both sides by 2: w = (P − 2l) / 2.','An equivalent form is w = P/2 − l.']},{e:'C = 5(F − 32) / 9',target:'F',right:'F = 9C / 5 + 32',wrong:['F = 5C / 9 + 32','F = 9(C + 32) / 5','F = 9C / 5 − 32'],steps:['Multiply both sides by 9: 9C = 5(F − 32).','Divide both sides by 5: 9C/5 = F − 32.','Add 32 to both sides: F = 9C/5 + 32.']}]);}
-return {...f,type:'formula',label:'Rearrange a formula',answer:f.right,options:shuffle([f.right,...f.wrong])};}
 
-function formula(l){
- if(Math.random()<.3)return classicFormula(l);
- const a=ri(2,9),b=ri(1,15),c=ri(2,9);let f;
- if(l===1)f={e:'y = '+a+'x',target:'x',right:'x = y / '+a,wrong:['x = '+a+'y','x = '+a+' / y','x = y − '+a],steps:['Divide both sides by '+a+'.','x = y / '+a]};
- else if(l===2)f={e:'y = '+a+'x + '+b,target:'x',right:'x = (y − '+b+') / '+a,wrong:['x = (y + '+b+') / '+a,'x = '+a+'(y − '+b+')','x = y − '+b+' / '+a],steps:['Subtract '+b+' from both sides: y − '+b+' = '+a+'x.','Divide both sides by '+a+': x = (y − '+b+') / '+a+'.']};
- else f={e:'y = '+a+'(x + '+b+') / '+c,target:'x',right:'x = '+c+'y / '+a+' − '+b,wrong:['x = '+a+'y / '+c+' − '+b,'x = '+c+'y / '+a+' + '+b,'x = ('+c+'y − '+b+') / '+a],steps:['Multiply both sides by '+c+': '+c+'y = '+a+'(x + '+b+').','Divide both sides by '+a+': '+c+'y / '+a+' = x + '+b+'.','Subtract '+b+' from both sides: x = '+c+'y / '+a+' − '+b+'.']};
- // Distinct factors keep the reciprocal distractor incorrect.
- if(l===3&&a===c)return formula(l);
- return {...f,type:'formula',label:'Rearrange a formula',answer:f.right,options:shuffle([f.right,...f.wrong])};
+// Exact fractions {n,d}; plain numbers are also accepted where noted (decimals in word problems).
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1;};
+function F(n,d=1){if(d<0){n=-n;d=-d;}const g=gcd(n,d);return {n:n/g,d:d/g};}
+const fadd=(a,b)=>F(a.n*b.d+b.n*a.d,a.d*b.d),fsub=(a,b)=>F(a.n*b.d-b.n*a.d,a.d*b.d),fmul=(a,b)=>F(a.n*b.n,a.d*b.d);
+const V=a=>typeof a==='number'?a:a.n/a.d;
+const absv=a=>typeof a==='number'?Math.abs(a):F(Math.abs(a.n),a.d);
+function fs(a){if(typeof a==='number')return neg(a);return (a.n<0?'−':'')+(a.d===1?Math.abs(a.n):Math.abs(a.n)+'/'+a.d);}
+function coefTerm(m,v){const k=V(m);if(k===0)return '';if(k===1)return v;if(k===-1)return '−'+v;return fs(m)+v;}
+function siStr(m,b,X='x',Y='y'){const t=coefTerm(m,X),bv=V(b);if(!t)return `${Y} = ${fs(b)}`;if(bv===0)return `${Y} = ${t}`;return `${Y} = ${t} ${bv<0?'−':'+'} ${fs(absv(b))}`;}
+function psStr(x1,y1,m,X='x',Y='y'){const side=(v,c)=>c===0?v:`${v} ${c>0?'−':'+'} ${fmtN(Math.abs(c))}`,k=V(m),mm=k===1?'':k===-1?'−':fs(m);return `${side(Y,y1)} = ${x1===0?(coefTerm(m,X)||'0'+X):mm+'('+side(X,x1)+')'}`;}
+function stdStr(A,B,C){let s=A===0?'':coefTerm(A,'x');const yb=coefTerm(Math.abs(B),'y');s+=s?(B<0?' − ':' + ')+yb:(B<0?'−':'')+yb;return s+' = '+neg(C);}
+const lineMB=(m,b)=>({A:-V(m),B:1,C:V(b)});
+const onLine=(L,x,y)=>Math.abs(L.A*x+L.B*y-L.C)<1e-9;
+const FRACS=[[1,2],[-1,2],[2,3],[-2,3],[3,2],[-3,2],[1,3],[-1,3],[3,4],[-3,4],[2,5],[-2,5],[5,2],[-4,3],[4,3],[-5,2]].map(([n,d])=>F(n,d));
+const Q=o=>({condition:'',display:null,...o,key:o.type+'|'+o.prompt+'|'+JSON.stringify(o.display)});
+const text=html=>({kind:'text',html}),story=html=>({kind:'story',html}),math=src=>({kind:'math',src});
+const pt=(x,y)=>`(${neg(x)}, ${neg(y)})`;
+
+// ---------- Warm-ups: equations & formulas ----------
+function genSolve(l){const x=ri(-9,9),a=ri(2,9),b=pick([-1,1])*ri(1,12);let e,steps,label;
+ const mv=b=>`${b>0?'Subtract':'Add'} ${Math.abs(b)} ${b>0?'from':'to'} both sides`;
+ if(l===1){label='One-step equations';if(Math.random()<.5){e='x'+signed(b)+' = '+(x+b);steps=[mv(b)+'.',`{{x = ${x+b}${signed(-b)} = ${x}}}`];}else{e=term(a)+' = '+a*x;steps=[`Divide both sides by ${a}.`,`{{x = (${a*x})/${a} = ${x}}}`];}}
+ else if(l===2){label='Two-step equations';e=term(a)+signed(b)+' = '+(a*x+b);steps=[mv(b)+' to remove the constant term.',`{{${term(a)} = ${a*x}}}`,`Divide both sides by ${a}: {{x = ${x}}}`];}
+ else if(Math.random()<.5){label='Multi-step equations';e=`${a}(x${signed(b)}) = ${a*(x+b)}`;steps=[`Divide both sides by ${a}.`,`{{x${signed(b)} = ${x+b}}}`,mv(b)+`: {{x = ${x}}}`];}
+ else{label='Multi-step equations';const c=a+ri(1,5),d=(a-c)*x+b;e=term(a)+signed(b)+' = '+term(c)+signed(d);steps=[`Subtract {{${term(a)}}} from both sides.`,`{{${b} = ${term(c-a)}${signed(d)}}}`,`${d>=0?'Subtract':'Add'} ${Math.abs(d)} ${d>=0?'from':'to'} both sides: {{${b-d} = ${term(c-a)}}}`,`Divide both sides by ${c-a}: {{x = ${x}}}`];}
+ return Q({type:'equation',label,prompt:'Find the missing value.',condition:'Solve for x.',display:math(e),fields:[{kind:'num',pre:'x =',answer:x}],steps});}
+
+function genFormula(l){
+ const wrap=(f,label='Rearrange a formula')=>Q({type:'formula',label,prompt:`Solve for ${f.target}. Get ${f.target} by itself.`,condition:f.condition||'Choose the equivalent formula.',display:math(f.e),fields:[{kind:'choice',options:shuffle([f.right,...f.wrong]),answer:f.right}],steps:f.steps});
+ if(Math.random()<.3){const k=ri(2,9);let f;
+  if(l===1)f=pick([{e:`y = x + ${k}`,target:'x',right:`x = y − ${k}`,wrong:[`x = y + ${k}`,`x = ${k} − y`,`x = y / ${k}`],steps:[`Subtract ${k} from both sides.`,`{{x = y − ${k}}}`]},{e:'A = l × w',target:'w',right:'w = A / l',wrong:['w = A × l','w = l / A','w = A − l'],condition:'Assume l ≠ 0.',steps:['Divide both sides by l.','{{w = A / l}}']},{e:`y = x / ${k}`,target:'x',right:`x = ${k}y`,wrong:[`x = y / ${k}`,`x = ${k} / y`,`x = y − ${k}`],steps:[`Multiply both sides by ${k}.`,`{{x = ${k}y}}`]}]);
+  else if(l===2)f=pick([{e:'y = mx + b',target:'x',right:'x = (y − b) / m',wrong:['x = y − b / m','x = (y + b) / m','x = m(y − b)'],condition:'Assume m ≠ 0.',steps:['Subtract b from both sides: {{y − b = mx}}','Divide both sides by m: {{x = (y − b) / m}}','The whole numerator is divided by m.']},{e:'v = u + at',target:'t',right:'t = (v − u) / a',wrong:['t = (v + u) / a','t = a(v − u)','t = v − u / a'],condition:'Assume a ≠ 0.',steps:['Subtract u from both sides: {{v − u = at}}','Divide both sides by a: {{t = (v − u) / a}}']}]);
+  else f=pick([{e:'P = 2l + 2w',target:'w',right:'w = (P − 2l) / 2',wrong:['w = P − l','w = (P − l) / 2','w = (P + 2l) / 2'],steps:['Subtract 2l from both sides: {{P − 2l = 2w}}','Divide both sides by 2: {{w = (P − 2l) / 2}}','An equivalent form is {{w = P/2 − l}}']},{e:'C = 5(F − 32) / 9',target:'F',right:'F = 9C / 5 + 32',wrong:['F = 5C / 9 + 32','F = 9(C + 32) / 5','F = 9C / 5 − 32'],steps:['Multiply both sides by 9: {{9C = 5(F − 32)}}','Divide both sides by 5: {{9C/5 = F − 32}}','Add 32 to both sides: {{F = 9C/5 + 32}}']}]);
+  return wrap(f);}
+ let a,b,c;do{a=ri(2,9);b=ri(1,15);c=ri(2,9);}while(l===3&&a===c); // distinct factors keep the reciprocal distractor wrong
+ if(l===1)return wrap({e:`y = ${a}x`,target:'x',right:`x = y / ${a}`,wrong:[`x = ${a}y`,`x = ${a} / y`,`x = y − ${a}`],steps:[`Divide both sides by ${a}.`,`{{x = y / ${a}}}`]});
+ if(l===2)return wrap({e:`y = ${a}x + ${b}`,target:'x',right:`x = (y − ${b}) / ${a}`,wrong:[`x = (y + ${b}) / ${a}`,`x = ${a}(y − ${b})`,`x = y − ${b} / ${a}`],steps:[`Subtract ${b} from both sides: {{y − ${b} = ${a}x}}`,`Divide both sides by ${a}: {{x = (y − ${b}) / ${a}}}`]});
+ return wrap({e:`y = ${a}(x + ${b}) / ${c}`,target:'x',right:`x = ${c}y / ${a} − ${b}`,wrong:[`x = ${a}y / ${c} − ${b}`,`x = ${c}y / ${a} + ${b}`,`x = (${c}y − ${b}) / ${a}`],steps:[`Multiply both sides by ${c}: {{${c}y = ${a}(x + ${b})}}`,`Divide both sides by ${a}: {{${c}y / ${a} = x + ${b}}}`,`Subtract ${b} from both sides: {{x = ${c}y / ${a} − ${b}}}`]});
 }
 
-function numberValue(s){s=s.trim().replaceAll('−','-');if(!s)return null;const decimal='[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)';if(new RegExp('^'+decimal+'$').test(s)){const n=Number(s);return Number.isFinite(n)?n:null;}if(new RegExp('^'+decimal+'\\s*/\\s*'+decimal+'$').test(s)){const [a,b]=s.split('/').map(Number);return b!==0&&Number.isFinite(a/b)?a/b:null;}return null;}
-function addMistake(){if(!mistakes.some(z=>z.e===q.e&&z.type===q.type))mistakes.push(q);$('review').disabled=!mistakes.length;$('review').textContent=`Review practice (${mistakes.length})`;}
-function stats(){$('solved').textContent=completed;$('accuracy').textContent=total?Math.round(100*firstCorrect/total)+'%':'—';$('progress').style.width=Math.min(completed,10)*10+'%';}
-function generateQuestion(review=false){if(review&&mistakes.length){q=mistakes.shift();}else{const t=mode==='mixed'?pick(['equation','formula']):mode;q=t==='equation'?equation(level):formula(level);}sequence++;renderQuestion();}
-function renderQuestion(){selected=null;hints=0;attempted=false;done=false;assisted=false;$('number').textContent='QUESTION '+String(sequence).padStart(2,'0');$('topic').textContent=q.label;$('prompt').textContent=q.type==='equation'?'Find the missing value.':`Solve for ${q.target}. Get ${q.target} by itself.`;$('condition').textContent=q.condition||'Choose an equivalent formula.';$('equation').innerHTML=mathMarkup(q.e);$('numeric').hidden=q.type!=='equation';$('inputhelp').hidden=q.type!=='equation';$('choices').hidden=q.type!=='formula';$('work').value='';$('answer').value='';$('answer').disabled=false;$('feedback').textContent='';$('feedback').className='feedback';$('solution').hidden=true;$('check').disabled=false;$('hint').disabled=false;$('show').disabled=false;$('choices').replaceChildren();if(q.options)q.options.forEach(option=>{const btn=document.createElement('button');btn.type='button';btn.className='choice';btn.innerHTML=mathMarkup(option);btn.setAttribute('aria-pressed','false');btn.onclick=()=>{selected=option;for(const b of $('choices').children){const on=b===btn;b.classList.toggle('selected',on);b.setAttribute('aria-pressed',String(on));}};$('choices').append(btn);});$('review').disabled=!mistakes.length;$('review').textContent=`Review practice (${mistakes.length})`;}
-function steps(all){assisted=true;addMistake();hints=all?q.steps.length:Math.min(hints+1,q.steps.length);$('solution').hidden=false;$('solutionTitle').textContent=all?'Step-by-step solution':`Hint ${hints}`;$('steps').replaceChildren(...q.steps.slice(0,hints).map((s,i)=>{const p=document.createElement('p');p.innerHTML=`${i+1}. ${stepMarkup(s)}`;return p;}));$('hint').disabled=hints===q.steps.length;}
-$('form').onsubmit=event=>{event.preventDefault();if(done)return;const value=q.type==='equation'?numberValue($('answer').value):selected;if(value===null){$('feedback').textContent=q.type==='equation'?'Enter a valid number or fraction. The denominator cannot be zero.':'Choose an answer before checking.';return;}const correct=q.type==='equation'?Math.abs(value-q.answer)<1e-9:value===q.answer;if(!attempted){total++;if(correct&&!assisted)firstCorrect++;attempted=true;}if(correct){done=true;completed++;$('feedback').className='feedback good';$('feedback').textContent=(assisted?'You got it! Try this one on your own later in Review practice.':'That’s right! Nicely done — both sides are balanced.')+(completed%10===0?' Another 10 questions completed! Take a little break.':'');$('check').disabled=true;$('answer').disabled=true;for(const b of $('choices').children)b.disabled=true;}else{addMistake();$('feedback').className='feedback';$('feedback').textContent=q.type==='equation'?'Not quite yet. Substitute your answer into the original equation. Are both sides equal? You can also try a hint.':'Take another look. Did you do the same operation to both sides? Pay attention to the parentheses.';}stats();};
+// ---------- Chapter 2: linear equations ----------
+const slopeStep=(x1,y1,x2,y2,m)=>`Slope = rise ÷ run: {{m = (${neg(y2)} − ${par(y1)})/(${neg(x2)} − ${par(x1)}) = (${neg(y2-y1)})/(${neg(x2-x1)})${m?' = '+fs(m):''}}}`;
 
-const history=[];let cursor=-1;
-function snapshot(){return {q,selected,hints,attempted,done,assisted,work:$('work').value,answer:$('answer').value,feedback:$('feedback').textContent,feedbackClass:$('feedback').className,solutionHidden:$('solution').hidden,solutionTitle:$('solutionTitle').textContent};}
-function saveCurrent(){if(cursor>=0)history[cursor]=snapshot();}
-function updateNavigation(){$('next').disabled=cursor>=history.length-1;$('previous').disabled=cursor<=0;$('position').textContent=(cursor+1)+' / '+history.length;$('number').textContent='QUESTION '+String(cursor+1).padStart(2,'0');}
-function restore(index){cursor=index;const state=history[index];q=state.q;renderQuestion();({selected,hints,attempted,done,assisted}=state);$('work').value=state.work;$('answer').value=state.answer;$('answer').disabled=done;$('check').disabled=done;$('hint').disabled=hints===q.steps.length;$('feedback').textContent=state.feedback;$('feedback').className=state.feedbackClass;$('solution').hidden=state.solutionHidden;$('solutionTitle').textContent=state.solutionTitle;$('steps').replaceChildren(...q.steps.slice(0,hints).map((text,i)=>{const p=document.createElement('p');p.innerHTML=(i+1)+'. '+stepMarkup(text);return p;}));for(let i=0;i<$('choices').children.length;i++){const b=$('choices').children[i],on=q.options[i]===selected;b.classList.toggle('selected',on);b.setAttribute('aria-pressed',String(on));b.disabled=done;}updateNavigation();}
+function genSlope(l){let x1,y1,x2,y2;
+ for(;;){x1=ri(-7,7);y1=ri(-7,7);
+  if(l===1){const m=nz(-4,4),dx=pick([1,2,3,-1,-2]);x2=x1+dx;y2=y1+m*dx;}
+  else if(l===2){x2=ri(-8,8);y2=ri(-8,8);if(x2!==x1&&(y2-y1)%(x2-x1)===0&&Math.random()<.7)continue;}
+  else{const r=Math.random();x2=r<.15?x1:ri(-9,9);y2=r>=.15&&r<.3?y1:ri(-9,9);}
+  if((x1!==x2||y1!==y2)&&Math.abs(x2)<=9&&Math.abs(y2)<=9&&(l===3||x1!==x2))break;}
+ const vertical=x1===x2,m=vertical?null:F(y2-y1,x2-x1);
+ const steps=[`Use slope = (y₂ − y₁) ÷ (x₂ − x₁) with ${pt(x1,y1)} and ${pt(x2,y2)}.`,slopeStep(x1,y1,x2,y2,m)];
+ if(vertical)steps.push('The run is 0 and you can’t divide by 0, so the slope is <b>undefined</b> (a vertical line).');
+ else if(m.n===0)steps.push('The rise is 0, so {{m = 0}}. That is a horizontal line.');
+ else steps.push(`Simplify: {{m = ${fs(m)}}}`+(m.d>1?'. Leave it as a fraction.':''));
+ return Q({type:'slope',label:'Slope from two points',prompt:'Find the slope of the line through these two points.',display:text(`${pt(x1,y1)} &nbsp;and&nbsp; ${pt(x2,y2)}`),fields:[{kind:'num',pre:'m =',answer:vertical?'undef':V(m),undef:true}],steps});}
 
-function fresh(){
- const unique=new Map();
- for(let attempts=0;unique.size<10&&attempts<2000;attempts++){
-  const type=mode==='mixed'?(unique.size%2===0?'equation':'formula'):mode;
-  const item=type==='equation'?equation(level):formula(level);
-  const key=item.type+'|'+item.e.replace(/\s/g,'')+'|'+(item.target||'x');
-  if(!unique.has(key))unique.set(key,item);
- }
- if(unique.size<10)throw Error('Could not generate a complete set. Please try again.');
- history.length=0;cursor=-1;sequence=0;total=0;firstCorrect=0;completed=0;mistakes=[];
- for(const item of shuffle([...unique.values()]))history.push({q:item,selected:null,hints:0,attempted:false,done:false,assisted:false,work:'',answer:'',feedback:'',feedbackClass:'feedback',solutionHidden:true,solutionTitle:''});
- restore(0);stats();
-}
-function load(review=false){
- saveCurrent();
- if(review){const candidates=history.map((state,i)=>({state,i})).filter(({state})=>mistakes.includes(state.q));const target=candidates.find(({i})=>i>cursor)||candidates[0];if(target)restore(target.i);return;}
- if(cursor+1<history.length)restore(cursor+1);
-}
-function previous(){if(cursor>0){saveCurrent();restore(cursor-1);}}
-$('previous').onclick=previous;$('newset').onclick=()=>fresh();
+function genSI(l){let m,b,x1,y1,x2,y2;
+ for(let t=0;t<999;t++){
+  if(l<3){m=l===1?F(nz(-4,4)):F(nz(-5,5),pick([2,3,4,5]));if(l===2&&m.d===1&&Math.random()<.7)continue;b=F(ri(-6,6));
+   const ks=shuffle([-3,-2,-1,0,1,2,3]).filter(k=>Math.abs(k*m.d)<=9);let [k1,k2]=ks;if(Math.random()<.35&&k2!==0)k1=0;
+   x1=k1*m.d;x2=k2*m.d;y1=V(b)+m.n*k1;y2=V(b)+m.n*k2;}
+  else{x1=ri(-6,6);x2=ri(-6,6);y1=ri(-8,8);y2=ri(-8,8);if(x1===x2)continue;m=F(y2-y1,x2-x1);b=fsub(F(y1),fmul(m,F(x1)));if(b.d===1&&Math.random()<.6)continue;}
+  if(x1!==x2&&Math.abs(y1)<=12&&Math.abs(y2)<=12)break;}
+ const ans=siStr(m,b),steps=[slopeStep(x1,y1,x2,y2,m)];
+ if(x1===0)steps.push(`${pt(x1,y1)} is on the y-axis, so it is the y-intercept: {{b = ${neg(y1)}}}`);
+ else steps.push(`Put ${pt(x1,y1)} into {{y = mx + b}}: {{${neg(y1)} = ${fs(m)}(${neg(x1)}) + b}}`,`{{${neg(y1)} = ${fs(fmul(m,F(x1)))} + b}}, so {{b = ${fs(b)}}}`);
+ steps.push(`Answer: {{${ans}}}. Check it with ${pt(x2,y2)}.`);
+ return Q({type:'si',label:'Slope-intercept form',prompt:'Write an equation in slope-intercept form for the line through these points.',display:text(`${pt(x1,y1)} &nbsp;and&nbsp; ${pt(x2,y2)}`),fields:[{kind:'eq',form:'si',line:lineMB(m,b),placeholder:'y = mx + b'}],steps});}
 
-$('hint').onclick=()=>steps(false);$('show').onclick=()=>steps(true);$('next').onclick=()=>load();$('review').onclick=()=>load(true);$('level').onchange=e=>{level=Number(e.target.value);fresh();};document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll('.mode').forEach(z=>z.classList.toggle('active',z===b));fresh();});fresh();
+function genPS(l,variant){
+ variant=variant||(l>=2&&Math.random()<.35?'read':'write');
+ let x1,y1;do{x1=ri(-6,6);y1=ri(-7,7);}while(x1===0&&y1===0);
+ const m=l===1?F(nz(-5,5)):Math.random()<.2?F(0):F(nz(-5,5),pick([1,2,3,4])),line=lineMB(m,fsub(F(y1),fmul(m,F(x1))));
+ const ps=psStr(x1,y1,m);
+ if(variant==='read')return Q({type:'ps',label:'Point-slope form',prompt:'This equation is in point-slope form. Find the slope and the point it uses.',display:math(ps),
+  fields:[{kind:'num',label:'Slope',pre:'m =',answer:V(m)},{kind:'num',label:'Point: x-coordinate',pre:'x₁ =',answer:x1},{kind:'num',label:'Point: y-coordinate',pre:'y₁ =',answer:y1}],
+  steps:[`Compare with y − y₁ = m(x − x₁). The number in front of the parentheses is the slope: {{m = ${fs(m)}}}`,
+   `Inside the parentheses, the sign flips: ${x1<0?`x + ${-x1} = x − (${neg(x1)})`:x1===0?'just x means x − 0':`x − ${x1}`}, so x₁ = ${neg(x1)}.`,
+   `On the left, ${y1<0?`y + ${-y1} = y − (${neg(y1)})`:y1===0?'just y means y − 0':`y − ${y1}`}, so y₁ = ${neg(y1)}. The point is ${pt(x1,y1)}.`]});
+ const b=fsub(F(y1),fmul(m,F(x1))),fields=[{kind:'eq',label:'Point-slope form',form:'ps',line,placeholder:'y − y₁ = m(x − x₁)'}];
+ const steps=['Point-slope form: y − y₁ = m(x − x₁).',`Substitute x₁ = ${neg(x1)}, y₁ = ${neg(y1)}, m = ${fs(m)}: {{y − ${par(y1)} = ${fs(m)}(x − ${par(x1)})}}`,`${x1<0||y1<0?'Minus a negative is plus: ':'Answer: '}{{${ps}}}`];
+ if(m.n===0)steps.push(`Slope 0 means a horizontal line. It also simplifies to {{y = ${neg(y1)}}}.`);
+ if(l===3){fields.push({kind:'eq',label:'Slope-intercept form',form:'si',line,placeholder:'y = mx + b'});steps.push(`Distribute {{${fs(m)}}}, then ${y1>0?'add':'subtract'} ${Math.abs(y1)} on both sides: {{${siStr(m,b)}}}`);}
+ return Q({type:'ps',label:'Point-slope form',prompt:'Write an equation in point-slope form for the line through the point with the given slope.'+(l===3?' Then rewrite it in slope-intercept form.':''),
+  display:text(`${pt(x1,y1)}, &nbsp; ${mathMarkup('m = '+fs(m))}`),fields,steps});}
+
+function genRead(l){let m,b,pts;
+ for(;;){m=l===1?F(nz(-3,3)):Math.random()<.25?F(nz(-3,3)):pick(FRACS);b=ri(-5,5);
+  const ks=shuffle([-2,-1,1,2]).filter(k=>Math.abs(k*m.d)<=7&&Math.abs(b+k*m.n)<=7);
+  if(ks.length<2)continue;
+  pts=l<3?[{x:0,y:b,label:true},{x:ks[0]*m.d,y:b+ks[0]*m.n,label:true}]:[{x:ks[0]*m.d,y:b+ks[0]*m.n},{x:ks[1]*m.d,y:b+ks[1]*m.n}];break;}
+ const [p,q]=pts[0].x<pts[1].x?pts:[pts[1],pts[0]];
+ return Q({type:'read',label:'Equation from a graph',prompt:'Write an equation in slope-intercept form for the line shown.',condition:l<3?'':'Read the points from the grid.',
+  display:{kind:'graph',lines:[{L:lineMB(m,F(b)),cls:''}],pts},fields:[{kind:'eq',form:'si',line:lineMB(m,F(b)),placeholder:'y = mx + b'}],
+  steps:[`The line crosses the y-axis at ${pt(0,b)}, so {{b = ${neg(b)}}}`,`From ${pt(p.x,p.y)} to ${pt(q.x,q.y)}: rise ${neg(q.y-p.y)}, run ${q.x-p.x}. {{m = (${neg(q.y-p.y)})/(${q.x-p.x}) = ${fs(m)}}}`,`Answer: {{${siStr(m,F(b))}}}`]});}
+
+function genGraph(l,form){
+ form=form||(l===1?'si':l===2?pick(['si','si','ps']):pick(['ps','std','si']));
+ let m,b;do{m=l===1&&Math.random()<.8?F(nz(-3,3)):pick(FRACS.filter(f=>f.d<=4));b=ri(-5,5);}while(Math.abs(b+m.n)>7||m.d>7);
+ const line=lineMB(m,F(b)),rise=`${m.n<0?'down':'up'} ${Math.abs(m.n)}, right ${m.d}`;let src,steps;
+ if(form==='si'){src=siStr(m,F(b));steps=[`The y-intercept is b = ${neg(b)}. Plot ${pt(0,b)}.`,`The slope {{m = ${fs(m)}}} means ${rise}. Plot ${pt(m.d,b+m.n)}.`,'Draw the line through the two points.'];}
+ else if(form==='ps'){let k;do k=pick([-2,-1,1,2]);while(Math.abs(k*m.d)>6||Math.abs(b+k*m.n)>6);const x1=k*m.d,y1=b+k*m.n;src=psStr(x1,y1,m);
+  steps=[`Read the point from the equation (signs flip): plot ${pt(x1,y1)}.`,`The slope {{m = ${fs(m)}}} means ${rise}. Plot ${pt(x1+m.d,y1+m.n)}.`,'Draw the line through the two points.'];}
+ else{const k=m.d===1?pick([1,2]):1;let A=-m.n*k,B=m.d*k,C=b*B;if(A<0||(A===0&&B<0)){A=-A;B=-B;C=-C;}src=stdStr(A,B,C);
+  steps=[`Solve for y first. Move the x term: {{${coefTerm(B,'y')} = ${coefTerm(-A,'x')}${C<0?' − '+(-C):' + '+C}}}`.replace(' + 0}}','}}'),`Divide every term by ${B}: {{${siStr(m,F(b))}}}`,`Plot ${pt(0,b)}, then go ${rise} to ${pt(m.d,b+m.n)}. Draw the line.`];if(B===1)steps.splice(1,1);}
+ return Q({type:'graph',label:'Graph a line',prompt:'Graph the equation. Tap or click two grid points that are on the line.',display:math(src),fields:[{kind:'graph',line}],steps});}
+
+function genStd(l){let A,B,C,m,b;
+ if(l===1){B=ri(2,5);b=nz(-6,6);do A=nz(-6,6);while(A%B===0&&Math.random()<.6);m=F(A,B);C=b*B;
+  const src=`${B}y = ${coefTerm(A,'x')} ${C<0?'−':'+'} ${Math.abs(C)}`;
+  return Q({type:'std',label:'Rewrite in slope-intercept form',prompt:'Rewrite this equation in slope-intercept form.',display:math(src),fields:[{kind:'eq',form:'si',line:lineMB(m,F(b)),placeholder:'y = mx + b'}],
+   steps:[`Divide <b>every</b> term by ${B}.`,`{{y = ${fs(m)}x ${C<0?'−':'+'} ${Math.abs(C)}/${B}}}`,`Simplify: {{${siStr(m,F(b))}}}`]});}
+ if(l===2){m=F(nz(-5,5));B=pick([1,2,3,4]);}else{m=F(nz(-5,5),pick([2,3,4,5]));if(m.d===1)m=F(pick([1,2,3,-1,-2]),pick([2,3]));B=m.d*pick([1,2]);}
+ b=ri(-6,6);A=-m.n*(B/m.d);C=b*B;if(A<0){A=-A;B=-B;C=-C;}
+ const steps=[`Move the x term to the other side. Subtract ${A}x: {{${coefTerm(B,'y')} = ${coefTerm(-A,'x')}${C===0?'':C<0?' − '+(-C):' + '+C}}}`];
+ if(B!==1)steps.push(`Divide <b>every</b> term by ${neg(B)}: {{${siStr(m,F(b))}}}`);else steps.push(`Answer: {{${siStr(m,F(b))}}}`);
+ return Q({type:'std',label:'Standard → slope-intercept',prompt:'Rewrite this equation in slope-intercept form.',display:math(stdStr(A,B,C)),fields:[{kind:'eq',form:'si',line:lineMB(m,F(b)),placeholder:'y = mx + b'}],steps});}
+
+// ---------- word problems ----------
+const varsNote=(x,y,xd,yd)=>` Let <var>${x}</var> be ${xd} and <var>${y}</var> be ${yd}.`;
+function wordFixed(l){
+ const c=pick([{s:(F,R)=>`A video store charges ${money(F)} for a rental card plus ${money(R)} per movie rented.`,x:'m',y:'c',u:'movies',xd:'the number of movies'},
+  {s:(F,R)=>`A climbing gym charges a ${money(F)} sign-up fee plus ${money(R)} per visit.`,x:'v',y:'C',u:'visits',xd:'the number of visits'},
+  {s:(F,R)=>`A bowling alley charges ${money(F)} for shoe rental plus ${money(R)} per game.`,x:'g',y:'c',u:'games',xd:'the number of games'},
+  {s:(F,R)=>`A taxi charges a ${money(F)} base fare plus ${money(R)} per mile.`,x:'d',y:'c',u:'miles',xd:'the number of miles',dec:true},
+  {s:(F,R)=>`A phone plan costs ${money(F)} per month plus ${money(R)} for each gigabyte of data used.`,x:'g',y:'c',u:'gigabytes',xd:'the gigabytes used'},
+  {s:(F,R)=>`An art class charges a ${money(F)} supply fee plus ${money(R)} per class.`,x:'n',y:'c',u:'classes',xd:'the number of classes'}]);
+ const Fe=ri(3,25),R=c.dec||l===3&&Math.random()<.4?pick([1.5,2.5,3.5,2.25]):ri(2,9),n=ri(3,12),total=Fe+R*n,eq=siStr(R,Fe,c.x,c.y);
+ return Q({type:'word',label:'Word problem · fee + rate',prompt:'Read the situation, then answer each part.',display:story(c.s(Fe,R)+varsNote(c.x,c.y,c.xd,'the total cost in dollars')),
+  fields:[{kind:'eq',label:`Equation in slope-intercept form`,form:'si',vars:{x:c.x,y:c.y},line:{A:-R,B:1,C:Fe},placeholder:`${c.y} = …`},{kind:'num',label:`Total cost for ${n} ${c.u}`,pre:'$',answer:total}],
+  steps:[`The one-time fee is the starting value (y-intercept): {{b = ${fmtN(Fe)}}}`,`The cost per ${c.u.replace(/s$/,'')} is the rate (slope): {{m = ${fmtN(R)}}}`,`Equation: {{${eq}}}`,`Substitute {{${c.x} = ${n}}}: {{${c.y} = ${fmtN(R)}(${n}) + ${Fe} = ${fmtN(total)}}}. The cost is ${money(total)}.`]});}
+
+function wordTable(l){const R=pick([45,50,60,75,80,90]),Fe=pick([40,50,75,100,120]);
+ return Q({type:'word',label:'Word problem · table',prompt:'Fill in the table, then write the equation.',display:story(`An electrician charges ${money(R)} per hour on top of a set fee of ${money(Fe)} for every house call.`+varsNote('t','C','the hours worked','the total cost in dollars')),
+  fields:[0,1,2,3].map(t=>({kind:'num',label:`<var>t</var> = ${t} hour${t===1?'':'s'}`,pre:'C = $',answer:Fe+R*t})).concat([{kind:'eq',label:'Equation for <var>C</var> in terms of <var>t</var>',form:'si',vars:{x:'t',y:'C'},line:{A:-R,B:1,C:Fe},placeholder:'C = …'}]),
+  steps:[`At t = 0 the cost is just the fee: ${money(Fe)}.`,`Each hour adds ${money(R)}: ${[0,1,2,3].map(t=>money(Fe+R*t)).join(', ')}.`,`The fee is b and the hourly rate is m: {{C = ${R}t + ${Fe}}}`]});}
+
+function wordTwoPoints(l){
+ if(Math.random()<.3){const r=pick([1.5,2,2.5,3,4]),h0=ri(3,12),w1=ri(2,5),w2=w1+ri(2,5);let w3;do w3=ri(1,12);while(w3===w1||w3===w2);const H=w=>h0+r*w;
+  return Q({type:'word',label:'Word problem · two points',prompt:'Read the situation, then answer each part.',display:story(`Sophia measures a sunflower. After ${w1} weeks it is ${fmtN(H(w1))} cm tall. After ${w2} weeks it is ${fmtN(H(w2))} cm tall. It grows at a steady rate.`+varsNote('w','h','the number of weeks','the height in cm')),
+   fields:[{kind:'num',label:'Growth rate (cm per week)',pre:'m =',answer:r},{kind:'eq',label:'Equation in slope-intercept form',form:'si',vars:{x:'w',y:'h'},line:{A:-r,B:1,C:h0},placeholder:'h = …'},{kind:'num',label:'Height when Sophia first measured it (week 0)',pre:'h =',answer:h0},{kind:'num',label:`Height after ${w3} weeks`,pre:'h =',answer:H(w3)}],
+   steps:[`Two points: (${w1}, ${fmtN(H(w1))}) and (${w2}, ${fmtN(H(w2))}).`,`{{m = (${fmtN(H(w2))} − ${fmtN(H(w1))})/(${w2} − ${w1}) = ${fmtN(r)}}} cm per week.`,`Substitute (${w1}, ${fmtN(H(w1))}): {{${fmtN(H(w1))} = ${fmtN(r)}(${w1}) + b}}, so {{b = ${h0}}}`,`Equation: {{h = ${fmtN(r)}w + ${h0}}}. At week 0 the height is b = ${h0} cm.`,`{{h = ${fmtN(r)}(${w3}) + ${h0} = ${fmtN(H(w3))}}} cm.`]});}
+ if(l>=2&&Math.random()<.45){let p,Fc,n1,n2;do{p=ri(4,12);Fc=ri(4,12)*50;n1=ri(2,9)*10;n2=n1+ri(5,15)*10;}while(!(p*n1<Fc&&p*n2>Fc));const y1=p*n1-Fc,y2=p*n2-Fc;
+  return Q({type:'word',label:'Word problem · two points',prompt:'Read the situation, then answer each part.',display:story(`The drama club is selling tickets to its play. After selling ${n1} tickets, the club had a loss of ${money(-y1)}. After selling ${n2} tickets, it had a profit of ${money(y2)}.`+varsNote('x','y','the number of tickets sold','the profit in dollars (a loss is negative)')),
+   fields:[{kind:'eq',label:'Equation relating y and x',form:'si',line:{A:-p,B:1,C:-Fc},placeholder:'y = …'},{kind:'num',label:'Profit from each ticket',pre:'$',answer:p},{kind:'num',label:'Profit if they sold 0 tickets (a loss is negative)',pre:'y =',answer:-Fc}],
+   steps:[`Two points: ${pt(n1,y1)} and ${pt(n2,y2)}. A loss is a negative y.`,`{{m = (${y2} − (${neg(y1)}))/(${n2} − ${n1}) = ${y2-y1}/${n2-n1} = ${p}}}. That is the profit per ticket.`,`Substitute ${pt(n1,y1)}: {{${neg(y1)} = ${p}(${n1}) + b}}, so {{b = ${neg(-Fc)}}}`,`Equation: {{y = ${p}x − ${Fc}}}`,`When x = 0, {{y = −${Fc}}}. They would lose ${money(Fc)}.`]});}
+ const c=pick([['dance','l'],['swim','l'],['piano','l'],['guitar','l']]),r=ri(8,20),f=ri(5,40),n1=ri(3,8),n2=n1+ri(2,6);let n3;do n3=ri(2,15);while(n3===n1||n3===n2);
+ const T1=r*n1+f,T2=r*n2+f;
+ return Q({type:'word',label:'Word problem · two points',prompt:'Read the situation, then answer each part.',display:story(`The cost for ${n1} ${c[0]} lessons is ${money(T1)}. The cost for ${n2} lessons is ${money(T2)}.`+varsNote('l','C','the number of lessons','the total cost in dollars')),
+  fields:[{kind:'eq',label:'Linear equation for C',form:'si',vars:{x:'l',y:'C'},line:{A:-r,B:1,C:f},placeholder:'C = …'},{kind:'num',label:`Cost of ${n3} lessons`,pre:'$',answer:r*n3+f}],
+  steps:[`Two points: (${n1}, ${T1}) and (${n2}, ${T2}).`,`{{m = (${T2} − ${T1})/(${n2} − ${n1}) = ${T2-T1}/${n2-n1} = ${r}}}`,`Substitute (${n1}, ${T1}): {{${T1} = ${r}(${n1}) + b}}, so {{b = ${f}}}`,`Equation: {{C = ${r}l + ${f}}}`,`{{C = ${r}(${n3}) + ${f} = ${r*n3+f}}}. The cost is ${money(r*n3+f)}.`]});}
+
+function wordPointRate(l){const R=ri(3,5)*5,h=ri(3,10),fee=ri(8,18)*5,T=R*h+fee;
+ const c=pick([{s:`A construction company charges ${money(R)} per hour for debris removal, plus a one-time fee for using a trash dumpster. The total fee for ${h} hours of service is ${money(T)}.`,x:'x',y:'y',xd:'the number of hours',yd:'the total fee'},
+  {s:`An electrician charges ${money(R*4)} per hour plus a fixed fee for each house call. For a ${h}-hour job the electrician earned ${money(R*4*h+fee)}.`,x:'t',y:'C',xd:'the hours worked',yd:'the total cost',k:4}]);
+ const rate=R*(c.k||1),tot=rate*h+fee;
+ return Q({type:'word',label:'Word problem · point + rate',prompt:'Read the situation, then answer each part.',display:story(c.s+varsNote(c.x,c.y,c.xd,c.yd+' in dollars')),
+  fields:[{kind:'eq',label:'Point-slope form',form:'ps',vars:{x:c.x,y:c.y},line:{A:-rate,B:1,C:fee},placeholder:`${c.y} − ${c.y}₁ = m(${c.x} − ${c.x}₁)`},{kind:'eq',label:'Slope-intercept form',form:'si',vars:{x:c.x,y:c.y},line:{A:-rate,B:1,C:fee},placeholder:`${c.y} = …`},{kind:'num',label:'The one-time (fixed) fee',pre:'$',answer:fee}],
+  steps:[`The hourly rate is the slope: {{m = ${rate}}}. The known total gives the point (${h}, ${tot}).`,`Point-slope form: {{${psStr(h,tot,rate,c.x,c.y)}}}`,`Distribute: {{${c.y} − ${tot} = ${rate}${c.x} − ${rate*h}}}`,`Add ${tot} to both sides: {{${c.y} = ${rate}${c.x} + ${fee}}}`,`The fixed fee is the y-intercept: ${money(fee)}.`]});}
+
+function wordDecrease(l){
+ const c=pick([()=>{const r=pick([1.5,2,2.5,3,4]),S=pick([24,30,32,36,40,48]);return {r,S,s:`A food truck’s fuel tank holds ${S} gallons of gasoline. The truck uses ${r} gallons for each hour of driving.`,xd:'the hours of driving',yd:'the gallons left in the tank',u:'gallons',after:h=>`Fuel left after ${h} hours`,empty:'Hours until the tank is empty'};},
+  ()=>{const r=pick([4,5,8,10,12.5]);return {r,S:100,s:`A phone starts at 100% battery and loses ${r}% each hour while streaming video.`,xd:'the hours of streaming',yd:'the battery percent',u:'%',after:h=>`Battery left after ${h} hours`,empty:'Hours until the battery hits 0%'};},
+  ()=>{const r=pick([0.5,1,1.5,2]),S=pick([12,15,18,20,24]);return {r,S,s:`A candle is ${S} cm tall. It burns down ${r} cm every hour.`,xd:'the hours burned',yd:'the height of the candle in cm',after:h=>`Height after ${h} hours`,empty:'Hours until the candle burns out'};},
+  ()=>{const r=pick([4,5,6,8]),S=r*pick([6,8,10,12]);return {r,S,s:`Maya has a ${money(S)} gift card. She spends ${money(r)} every time she buys lunch with it.`,xd:'the number of lunches',yd:'the dollars left on the card',u:'dollars',after:h=>`Money left after ${h} lunches`,empty:'Lunches until the card is at $0'};}])();
+ let h;do h=ri(2,8);while(c.S-c.r*h<=0);
+ const fields=[{kind:'eq',label:'Linear equation',form:'si',line:{A:c.r,B:1,C:c.S},placeholder:'y = …'},{kind:'num',label:c.after(h),pre:'y =',answer:c.S-c.r*h}],
+  steps=[`The starting amount is the y-intercept: {{b = ${c.S}}}`,`The amount goes <b>down</b> ${c.r} each time, so the slope is negative: {{m = −${c.r}}}`,`Equation: {{y = −${c.r}x + ${c.S}}}`,`{{y = −${c.r}(${h}) + ${c.S} = ${fmtN(c.S-c.r*h)}}}`];
+ if(l===3){fields.push({kind:'num',label:c.empty,pre:'x =',answer:c.S/c.r});steps.push(`Set y = 0: {{0 = −${c.r}x + ${c.S}}}, so {{x = ${c.S}/${c.r} = ${fmtN(c.S/c.r)}}}`);}
+ return Q({type:'word',label:'Word problem · going down',prompt:'Read the situation, then answer each part.',display:story(c.s+varsNote('x','y',c.xd,c.yd)),fields,steps});}
+
+function genWord(l){return pick(l===1?[wordFixed,wordFixed,wordTable,wordDecrease,wordTwoPoints]:[wordFixed,wordTable,wordTwoPoints,wordPointRate,wordDecrease,wordTwoPoints,wordPointRate])(l);}
+
+const QUIZ=[l=>genSI(l),l=>wordFixed(l),l=>genRead(l),l=>wordTwoPoints(l),l=>genGraph(l,'si'),l=>wordPointRate(l),l=>genGraph(l,l===1?'ps':'std'),l=>wordDecrease(l),l=>genPS(l,'write'),l=>pick([wordTable,wordTwoPoints])(l)];
+const MODES=[
+ {id:'quiz',group:'Test prep',icon:'★',name:'Mock quiz 2-1 / 2-2',desc:'Mixed set like the real quiz',star:true},
+ {id:'slope',group:'Linear equations',icon:'m',name:'Slope from two points',desc:'Rise over run',gen:genSlope},
+ {id:'si',icon:'b',name:'Slope-intercept from points',desc:'y = mx + b',gen:genSI},
+ {id:'ps',icon:'y₁',name:'Point-slope form',desc:'y − y₁ = m(x − x₁)',gen:genPS},
+ {id:'read',icon:'⌗',name:'Equation from a graph',desc:'Read b and the slope',gen:genRead},
+ {id:'graph',icon:'↗',name:'Graph a line',desc:'Click two points',gen:genGraph},
+ {id:'std',icon:'=',name:'Standard → slope-intercept',desc:'Solve for y',gen:genStd},
+ {id:'word',icon:'$',name:'Word problems',desc:'Fees, rates and tables',gen:genWord},
+ {id:'equation',group:'Warm-ups',icon:'x',name:'Solve equations',desc:'Find x',gen:genSolve},
+ {id:'formula',icon:'⇄',name:'Rearrange formulas',desc:'Pick the equivalent formula',gen:genFormula}];
+
+// ---------- graph (SVG) ----------
+const GR=8,GS=360,GP=16,GU=(GS-2*GP)/(2*GR),px=(x,y)=>[GP+(x+GR)*GU,GP+(GR-y)*GU];
+function lineSeg(L){if(Math.abs(L.B)<1e-12){const x=L.C/L.A;return [px(x,-GR-1),px(x,GR+1)];}const y=x=>(L.C-L.A*x)/L.B;return [px(-GR-1,y(-GR-1)),px(GR+1,y(GR+1))];}
+function graphSVG(lines,pts,clickable){
+ let s=`<svg class="graph${clickable?' clickable':''}" viewBox="0 0 ${GS} ${GS}" role="img" aria-label="Coordinate grid"><defs><clipPath id="gclip"><rect x="${GP}" y="${GP}" width="${GS-2*GP}" height="${GS-2*GP}"/></clipPath></defs>`;
+ for(let i=-GR;i<=GR;i++){const [a]=px(i,0),[,b]=px(0,i);s+=`<line class="g-grid" x1="${a}" y1="${GP}" x2="${a}" y2="${GS-GP}"/><line class="g-grid" x1="${GP}" y1="${b}" x2="${GS-GP}" y2="${b}"/>`;}
+ const [ox,oy]=px(0,0);s+=`<line class="g-axis" x1="${GP}" y1="${oy}" x2="${GS-GP}" y2="${oy}"/><line class="g-axis" x1="${ox}" y1="${GP}" x2="${ox}" y2="${GS-GP}"/>`;
+ for(let i=-GR+2;i<GR;i+=2)if(i){const [a,b]=px(i,0),[c,d]=px(0,i);s+=`<text class="g-tick" x="${a}" y="${b+13}" text-anchor="middle">${neg(i)}</text><text class="g-tick" x="${c-5}" y="${d+3.5}" text-anchor="end">${neg(i)}</text>`;}
+ s+=`<text class="g-tick" x="${GS-GP-4}" y="${oy-5}" text-anchor="end" font-style="italic">x</text><text class="g-tick" x="${ox+6}" y="${GP+10}" font-style="italic">y</text>`;
+ s+='<g clip-path="url(#gclip)">';for(const {L,cls} of lines){const [[a,b],[c,d]]=lineSeg(L);s+=`<line class="g-line ${cls}" x1="${a}" y1="${b}" x2="${c}" y2="${d}"/>`;}s+='</g>';
+ for(const p of pts){const [a,b]=px(p.x,p.y);s+=`<circle class="${p.cls||'g-pt'}" cx="${a}" cy="${b}" r="${p.cls?6:4.5}"/>`;if(p.label){const right=p.x<GR-3;s+=`<text class="g-label" x="${a+(right?9:-9)}" y="${b-9}" text-anchor="${right?'start':'end'}">${pt(p.x,p.y)}</text>`;}}
+ return s+'</svg>';}
+
+// ---------- answer checking ----------
+function numberValue(raw){let s=String(raw).trim().replace(/[−–—]/g,'-').replace(/[$,%]/g,'').trim();if(!s)return undefined;
+ if(/^(undefined|undef|und|none|no slope)$/i.test(s))return 'undef';
+ const d='[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)';if(new RegExp('^'+d+'$').test(s))return Number(s);
+ if(new RegExp('^'+d+'\\s*/\\s*'+d+'$').test(s)){const [a,b]=s.split('/').map(Number);return b!==0?a/b:null;}return null;}
+function parseLinear(str){
+ const toks=str.match(/\d+(?:\.\d*)?|\.\d+|[xy]|[()+\-*/]/g)||[];if(toks.join('')!==str)throw Error('bad');let p=0;
+ const isC=a=>Math.abs(a.x)<1e-12&&Math.abs(a.y)<1e-12,sc=(a,k)=>({x:a.x*k,y:a.y*k,c:a.c*k}),add=(a,b,k)=>({x:a.x+k*b.x,y:a.y+k*b.y,c:a.c+k*b.c});
+ const mul=(a,b)=>{if(isC(a))return sc(b,a.c);if(isC(b))return sc(a,b.c);throw Error('nonlinear');};
+ function primary(){const t=toks[p++];if(t==='('){const a=sum();if(toks[p++]!==')')throw Error('paren');return a;}if(t==='x')return {x:1,y:0,c:0};if(t==='y')return {x:0,y:1,c:0};if(t&&/^[\d.]/.test(t))return {x:0,y:0,c:Number(t)};throw Error('operand');}
+ function unary(){if(toks[p]==='-'){p++;return sc(unary(),-1);}if(toks[p]==='+'){p++;return unary();}return primary();}
+ function term(){let a=unary();for(;;){const t=toks[p];if(t==='*'||t==='/'){p++;const b=unary();if(t==='*')a=mul(a,b);else{if(!isC(b)||b.c===0)throw Error('div');a=sc(a,1/b.c);}}else if(t==='x'||t==='y'||t==='(')a=mul(a,unary());else break;}return a;}
+ function sum(){let a=term();while(toks[p]==='+'||toks[p]==='-'){const t=toks[p++];a=add(a,term(),t==='-'?-1:1);}return a;}
+ const r=sum();if(p!==toks.length)throw Error('extra');return r;}
+function readEquation(raw,vars){
+ let s=raw.replace(/[−–—]/g,'-').replace(/[×·]/g,'*').replace(/ℓ/g,'l').replace(/\s+/g,'');const X=vars.x.toLowerCase(),Y=vars.y.toLowerCase();
+ if(!s)return {missing:true};
+ let bad=false;s=s.replace(/[A-Za-z]/g,ch=>{const c=ch.toLowerCase();if(c===X||c==='x')return 'x';if(c===Y||c==='y')return 'y';bad=true;return '?';});
+ if(bad)return {err:`Use only the letters ${vars.x} and ${vars.y}.`};
+ const sides=s.split('=');if(sides.length!==2||!sides[0]||!sides[1])return {err:'Write one equation with a single “=” sign.'};
+ try{const L=parseLinear(sides[0]),R=parseLinear(sides[1]);return {s,e:{x:L.x-R.x,y:L.y-R.y,c:L.c-R.c}};}catch(e){return {err:'I can’t read that equation. Try a form like y = -3/2x + 4.'};}}
+function sameLine(e,L){const u=[e.x,e.y,e.c],v=[L.A,L.B,-L.C];if(Math.abs(u[0])<1e-9&&Math.abs(u[1])<1e-9)return false;const s=Math.max(...u.map(Math.abs))*Math.max(...v.map(Math.abs));return [[0,1],[0,2],[1,2]].every(([i,j])=>Math.abs(u[i]*v[j]-u[j]*v[i])<=1e-7*s);}
+const NUM='(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:/\\d+(?:\\.\\d*)?)?',SNUM=`(?:[+-]${NUM}|[+-]\\(-${NUM}\\))`,PSR=`-?(?:${NUM})?\\*?(?:\\(x${SNUM}?\\)|x)`;
+const FORMS={si:s=>{const [l,r]=s.split('=');return l==='y'&&!/[y(]/.test(r);},ps:s=>new RegExp(`^y${SNUM}?=${PSR}$`).test(s)||new RegExp(`^y=-?(?:${NUM})?\\*?\\(x${SNUM}?\\)${SNUM}$`).test(s)};
+const FORMNAME={si:'slope-intercept form (y = mx + b)',ps:'point-slope form, y − y₁ = m(x − x₁)'};
+
+function evalField(f,st,i){const v=st.values[i],tag=st.q.fields.length>1?`Part ${'abcdefg'[i]}: `:'';
+ if(f.kind==='num'){const n=numberValue(v);if(n===undefined)return {missing:true};if(n===null)return {ok:false,msg:tag+'Enter a number or a fraction like −3/2.'};
+  if(f.answer==='undef')return n==='undef'?{ok:true}:{ok:false,msg:tag+'Not quite. Check the run (x₂ − x₁) — what happens when it is 0?'};
+  if(n==='undef')return {ok:false,msg:tag+'This slope does exist. Compute rise ÷ run.'};
+  if(Math.abs(n-f.answer)<1e-6*Math.max(1,Math.abs(f.answer)))return {ok:true};
+  if(Math.abs(n+f.answer)<1e-6*Math.max(1,Math.abs(f.answer)))return {ok:false,msg:tag+'Close! Check the sign.'};
+  return {ok:false,msg:tag+'Not quite yet. Try plugging your answer back in.'};}
+ if(f.kind==='choice')return v===''?{missing:true}:{ok:v===f.answer,msg:tag+'Take another look. Did you do the same thing to both sides? Watch the parentheses.'};
+ if(f.kind==='graph'){const ps=st.pts;if(ps.length<2)return {missing:true};const off=ps.filter(p=>!onLine(f.line,p.x,p.y));
+  return off.length?{ok:false,msg:tag+`${off.map(p=>pt(p.x,p.y)).join(' and ')} ${off.length>1?'are':'is'} not on this line. Start from a point you can read from the equation, then use rise over run.`}:{ok:true};}
+ const r=readEquation(v,f.vars||{x:'x',y:'y'});if(r.missing)return {missing:true};if(r.err)return {ok:false,msg:tag+r.err};
+ if(sameLine(r.e,f.line)){if(f.form&&!FORMS[f.form](r.s))return {ok:false,msg:tag+`That’s the right line! Now write it in ${FORMNAME[f.form]}.`};return {ok:true};}
+ if(Math.abs(r.e.y)>1e-9){const mu=-r.e.x/r.e.y,bu=-r.e.c/r.e.y,mt=-f.line.A/f.line.B,bt=f.line.C/f.line.B;
+  if(Math.abs(mu-mt)<1e-9)return {ok:false,msg:tag+'Your slope is right, but the line is shifted. Recheck b (plug in a point).'};
+  if(Math.abs(mu+mt)<1e-9&&mt!==0)return {ok:false,msg:tag+'Check the sign of your slope. Is the line going up or down?'};
+  if(Math.abs(bu-bt)<1e-9)return {ok:false,msg:tag+'Your y-intercept is right; check the slope (rise over run).'};}
+ return {ok:false,msg:tag+'That’s a different line. Find the slope first, then b.'};}
+
+// ---------- state & rendering ----------
+let mode='quiz',level=1,history=[],cursor=0,total=0,firstCorrect=0,completed=0,mistakes=[];
+try{const s=JSON.parse(localStorage.getItem('algebraStudio')||'{}');if(MODES.some(m=>m.id===s.mode))mode=s.mode;if([1,2,3].includes(s.level))level=s.level;}catch(e){}
+const save=()=>{try{localStorage.setItem('algebraStudio',JSON.stringify({mode,level}));}catch(e){}};
+const S=()=>history[cursor];
+const newState=q=>({q,values:q.fields.map(()=>''),pts:[],ok:q.fields.map(()=>false),bad:q.fields.map(()=>false),hints:0,attempted:false,done:false,assisted:false,work:'',feedback:'',fclass:'feedback',sol:false,solAll:false});
+
+function renderModes(){let html='',open=false;for(const m of MODES){if(m.group){if(open)html+='</div>';html+=`<div class="group">${m.group}</div><div class="modes">`;open=true;}
+ html+=`<button class="mode${m.star?' star':''}${m.id===mode?' active':''}" data-mode="${m.id}"><i>${m.icon}</i><span>${m.name}<small>${m.desc}</small></span></button>`;}
+ $('modes').innerHTML=html+'</div>';$('modes').querySelectorAll('.mode').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;save();renderModes();fresh();});
+ document.querySelectorAll('#levels button').forEach(b=>b.classList.toggle('on',Number(b.dataset.level)===level));}
+
+function renderDisplay(st){const d=st.q.display,el=$('display');
+ if(!d){el.innerHTML='';return;}
+ if(d.kind==='math')el.innerHTML=`<div class="equation">${mathMarkup(d.src)}</div>`;
+ else if(d.kind==='text')el.innerHTML=`<div class="equation text">${d.html}</div>`;
+ else if(d.kind==='story')el.innerHTML=`<div class="story">${rich(d.html)}</div>`;
+ else if(d.kind==='graph')el.innerHTML=`<div class="graphwrap">${graphSVG(d.lines,d.pts,false)}</div>`;}
+
+function renderGraphField(i){const st=S(),f=st.q.fields[i],box=$('g'+i);if(!box)return;const lines=[],cls=st.ok[i]?'g-gpt':'g-upt';
+ if(st.solAll&&!st.ok[i])lines.push({L:f.line,cls:'g-ghost'});
+ if(st.pts.length===2){const [a,b]=st.pts;lines.push({L:{A:b.y-a.y,B:a.x-b.x,C:(b.y-a.y)*a.x+(a.x-b.x)*a.y},cls:st.ok[i]?'g-good':'g-user'});}
+ box.innerHTML=graphSVG(lines,st.pts.map(p=>({...p,cls,label:true})),!st.done);
+ const svg=box.querySelector('svg');if(st.done)return;
+ svg.addEventListener('click',ev=>{const m=svg.getScreenCTM();if(!m)return;const p=new DOMPoint(ev.clientX,ev.clientY).matrixTransform(m.inverse());
+  const x=Math.max(-GR,Math.min(GR,Math.round((p.x-GP)/GU-GR))),y=Math.max(-GR,Math.min(GR,Math.round(GR-(p.y-GP)/GU)));
+  const k=st.pts.findIndex(q=>q.x===x&&q.y===y);if(k>=0)st.pts.splice(k,1);else{if(st.pts.length>=2)st.pts.shift();st.pts.push({x,y});}
+  st.bad[i]=false;if(st.feedback&&!st.done){st.feedback='';$('feedback').innerHTML='';}$('gp'+i).textContent=st.pts.length?'Your points: '+st.pts.map(q=>pt(q.x,q.y)).join(', '):'Tap or click a grid point to place it.';box.parentElement.classList.remove('bad');renderGraphField(i);});}
+
+function renderFields(st){const q=st.q,multi=q.fields.length>1,box=$('fields');
+ box.innerHTML=q.fields.map((f,i)=>{const cls='field'+(st.ok[i]?' good':st.bad[i]?' bad':''),dis=st.ok[i]||st.done?' disabled':'',val=escapeText(st.values[i]).replaceAll('"','&quot;');
+  const head=(multi||f.label)?`<div class="flabel">${multi?`<span class="part">${'abcdefg'[i]}</span>`:''}<span>${f.label||(f.kind==='eq'?'Your equation':'Your answer')}</span></div>`:'';
+  if(f.kind==='num')return `<div class="${cls}">${head}<div class="inrow"><span class="pre">${(f.pre||'').replace('$','<span class="cur">$</span>')}</span><input id="f${i}" data-i="${i}" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="${f.undef?'number, fraction, or “undefined”':'number or fraction'}" value="${val}"${dis}></div></div>`;
+  if(f.kind==='eq')return `<div class="${cls}">${head}<input id="f${i}" data-i="${i}" placeholder="${f.placeholder||'y = mx + b'}" value="${val}" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="done"${dis}><div class="preview" id="pv${i}"></div></div>`;
+  if(f.kind==='choice')return `<div class="${cls} flat"><div class="choices" id="ch${i}">${f.options.map((o,k)=>`<button type="button" class="choice${st.values[i]===o?' selected':''}" data-k="${k}" aria-pressed="${st.values[i]===o}"${dis}>${mathMarkup(o)}</button>`).join('')}</div></div>`;
+  return `<div class="${cls} flat">${head}<div id="g${i}"></div><div class="gtools"><span id="gp${i}">${st.pts.length?'Your points: '+st.pts.map(q=>pt(q.x,q.y)).join(', '):'Tap or click a grid point to place it.'}</span><button type="button" data-clear="${i}"${dis}>Clear points</button></div></div>`;}).join('');
+ if(!multi&&q.fields[0].kind==='eq')box.insertAdjacentHTML('beforeend','<p class="help" style="margin-top:-8px">Type fractions with “/”: <b>y = -3/2x + 4</b>. Write negatives with “-”.</p>');
+ box.querySelectorAll('input').forEach(inp=>{const i=Number(inp.dataset.i);const pv=()=>{const p=$('pv'+i);if(!p)return;try{p.innerHTML=inp.value.trim()?mathMarkup(inp.value.replace(/ℓ/g,'l')):'';}catch(e){p.innerHTML='';}};pv();
+  inp.oninput=()=>{st.values[i]=inp.value;if(st.bad[i]){st.bad[i]=false;inp.closest('.field').classList.remove('bad');}pv();};});
+ q.fields.forEach((f,i)=>{if(f.kind==='choice')$('ch'+i).querySelectorAll('.choice').forEach(b=>b.onclick=()=>{st.values[i]=f.options[Number(b.dataset.k)];$('ch'+i).querySelectorAll('.choice').forEach(z=>{const on=z===b;z.classList.toggle('selected',on);z.setAttribute('aria-pressed',String(on));});});
+  if(f.kind==='graph'){renderGraphField(i);box.querySelector(`[data-clear="${i}"]`).onclick=()=>{st.pts=[];$('gp'+i).textContent='Tap or click a grid point to place it.';renderGraphField(i);};}});}
+
+function renderSolution(st){$('solution').hidden=!st.sol;if(!st.sol)return;$('solutionTitle').textContent=st.solAll?'Step-by-step solution':`Hint ${st.hints} of ${st.q.steps.length}`;
+ $('steps').innerHTML=st.q.steps.slice(0,st.hints).map((s,i)=>`<p>${i+1}. ${rich(s)}</p>`).join('');}
+
+function render(){const st=S(),q=st.q;
+ $('number').textContent='QUESTION '+String(cursor+1).padStart(2,'0');$('topic').textContent=q.label;
+ $('prompt').innerHTML=rich(q.prompt);$('condition').innerHTML=rich(q.condition||'');$('condition').hidden=!q.condition;
+ renderDisplay(st);renderFields(st);$('work').value=st.work;
+ $('feedback').innerHTML=st.feedback;$('feedback').className=st.fclass;renderSolution(st);
+ $('check').disabled=st.done;$('hint').disabled=st.hints>=q.steps.length;$('show').disabled=st.solAll;
+ $('previous').disabled=cursor<=0;$('next').disabled=cursor>=history.length-1;$('position').textContent=(cursor+1)+' / '+history.length;
+ stats();}
+function stats(){$('solved').textContent=completed;$('accuracy').textContent=total?Math.round(100*firstCorrect/total)+'%':'—';$('progress').style.width=(100*completed/Math.max(1,history.length))+'%';
+ $('review').disabled=!mistakes.length;$('review').textContent=`Review mistakes (${mistakes.length})`;}
+function addMistake(st){if(!mistakes.includes(st))mistakes.push(st);}
+
+function fresh(){const items=[],keys=new Set();
+ for(let t=0;items.length<10&&t<3000;t++){const g=mode==='quiz'?QUIZ[items.length]:MODES.find(m=>m.id===mode).gen;const q=g(level);if(keys.has(q.key))continue;keys.add(q.key);items.push(q);}
+ history=items.map(newState);cursor=0;total=0;firstCorrect=0;completed=0;mistakes=[];render();}
+
+$('form').onsubmit=ev=>{ev.preventDefault();const st=S();if(st.done)return;
+ const res=st.q.fields.map((f,i)=>st.ok[i]?{ok:true}:evalField(f,st,i));
+ if(res.some(r=>r.missing)){st.feedback=st.q.fields.length>1?'<p>Answer every part before checking.</p>':st.q.fields[0].kind==='graph'?'<p>Place two points on the grid first.</p>':'<p>Enter an answer before checking.</p>';st.fclass='feedback';$('feedback').innerHTML=st.feedback;$('feedback').className=st.fclass;return;}
+ const all=res.every(r=>r.ok);
+ if(!st.attempted){st.attempted=true;total++;if(all&&!st.assisted)firstCorrect++;}
+ st.ok=res.map(r=>r.ok);st.bad=res.map(r=>!r.ok);
+ if(all){st.done=true;completed++;st.fclass='feedback good';
+  st.feedback=`<p>${st.assisted?'You got it! This one is saved in “Review mistakes” so you can try it again on your own.':pick(['That’s right! Nicely done.','Correct — great work!','Yes! Clean and correct.'])}</p>`;
+  if(completed===history.length)st.feedback+=`<p>🎉 Set complete! First-try score: <b>${firstCorrect} / ${history.length}</b>. Take a short break, then try a new set.</p>`;}
+ else{addMistake(st);st.fclass='feedback';st.feedback=res.filter(r=>!r.ok).map(r=>`<p>${escapeText(r.msg)}</p>`).join('')+(res.some(r=>r.ok)?'<p>The green parts are already correct.</p>':'');}
+ const w=$('work').value;st.work=w;render();reveal('feedback');};
+const reveal=id=>requestAnimationFrame(()=>$(id).scrollIntoView({block:'nearest',behavior:'smooth'}));
+
+function openSteps(all){const st=S();st.assisted=true;addMistake(st);st.sol=true;st.hints=all?st.q.steps.length:Math.min(st.hints+1,st.q.steps.length);if(all||st.hints===st.q.steps.length)st.solAll=all||st.solAll;st.work=$('work').value;render();reveal('solution');}
+$('hint').onclick=()=>openSteps(false);$('show').onclick=()=>openSteps(true);
+$('work').oninput=()=>{S().work=$('work').value;};
+const go=i=>{if(i<0||i>=history.length)return;S().work=$('work').value;cursor=i;render();window.scrollTo({top:Math.min(window.scrollY,$('number').getBoundingClientRect().top+window.scrollY-16),behavior:'smooth'});};
+$('previous').onclick=()=>go(cursor-1);$('next').onclick=()=>go(cursor+1);
+$('review').onclick=()=>{if(!mistakes.length)return;const idx=mistakes.map(m=>history.indexOf(m)).filter(i=>i>=0).sort((a,b)=>a-b);go(idx.find(i=>i>cursor)??idx[0]);};
+$('newset').onclick=fresh;
+document.querySelectorAll('#levels button').forEach(b=>b.onclick=()=>{level=Number(b.dataset.level);save();renderModes();fresh();});
+renderModes();fresh();
 </script></body></html>
