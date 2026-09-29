@@ -87,6 +87,19 @@ math{font-family:var(--serif)}
  h1{font-size:27px}.hero{padding:18px 0}.exercise{padding:18px}.sheetbar{padding:12px 18px}.equation{font-size:28px}}
 @media(max-width:540px){.wrap{padding:14px 16px}#modes{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}.settings{grid-template-columns:1fr}.settings>div:last-child{display:none}.hero .sub{display:none}.hero{padding:12px 0 14px}h1{font-size:23px;margin:8px 0 0}.top button{font-size:13px;padding:8px 12px}.g-tick{font-size:14px}.brand small{display:none}.sheetbar{font-size:11px}.topic{font-size:11px;text-align:right}.equation{font-size:24px;padding:12px}.equation.text{font-size:20px}.choice{font-size:18px}
  .bottom{flex-wrap:wrap;padding:12px 16px}.quiet{order:2;width:100%}.navigation{width:100%;justify-content:space-between}.navigation button{min-width:96px}.footer{text-align:left}}
+.keypad{margin-top:14px;background:#eef1f7;border:1px solid #d9deea;border-radius:14px;padding:8px}
+.kbar{display:flex;justify-content:space-between;align-items:center;padding:0 4px 6px;font-size:12px;font-weight:700;color:var(--muted)}.kbar button{min-height:30px;padding:4px 10px;font-size:12px;border-color:transparent;background:transparent}
+.keys{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.keys button{min-height:46px;padding:0;font:500 20px var(--ui);background:#fff;border-color:#d4d9e5;border-radius:9px;box-shadow:0 1px 0 #c5cbd8;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.keys button:active:not(:disabled){transform:translateY(1px);box-shadow:none;background:var(--blue-soft)}
+.keys .v{font:italic 22px var(--serif)}.keys .fn{background:#e3e7f0;font-size:17px}.keys .ok{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 1px 0 var(--blue-d)}.keys .sm{font-size:13px;font-weight:600}
+.keys button:disabled{opacity:.35;box-shadow:none}
+math-field{display:block;width:100%;min-height:52px;border:1px solid #b9c2d6;border-radius:9px;padding:6px 10px;font-size:24px;background:#fff;color:var(--ink);--caret-color:var(--blue);--selection-background-color:var(--blue-soft);--placeholder-color:#8a91a0;--smart-fence-color:var(--muted)}
+math-field:focus-within{outline:3px solid var(--hl);outline-offset:2px}
+math-field::part(virtual-keyboard-toggle),math-field::part(menu-toggle){display:none}
+.field.good math-field{border-color:#9fd3b5;background:transparent;color:var(--good)}
+.kbtoggle{margin-top:12px;min-height:36px;padding:6px 12px;font-size:13px;background:transparent}
+@media(max-width:780px){.keypad{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;border-radius:16px 16px 0 0;border-width:1px 0 0;padding:8px 8px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px #1d264026}.keys{max-width:520px;margin:auto}body.kb-open{padding-bottom:250px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body><main class="wrap">
 <header class="top"><div class="brand"><div class="logo">S</div><div><b>ALGEBRA STUDIO</b><small>Sophia’s practice notebook</small></div></div><button id="newset" style="white-space:nowrap">↻ New set of 10</button></header>
@@ -114,7 +127,7 @@ math{font-family:var(--serif)}
   <p class="prompt" id="prompt"></p><p class="cond" id="condition"></p>
   <div id="display"></div>
   <form id="form" autocomplete="off">
-   <div><div class="fields" id="fields"></div>
+   <div><div class="fields" id="fields"></div><div id="keypad"></div>
     <div class="actions"><button class="primary" type="submit" id="check">Check answer ✓</button><button type="button" id="hint">Hint</button><button type="button" id="show">See steps</button></div>
     <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
     <div id="solution" class="solution" hidden><h3 id="solutionTitle"></h3><div id="steps"></div></div></div>
@@ -397,9 +410,11 @@ function evalField(f,st,i){const v=st.values[i],tag=st.q.fields.length>1?`Part $
 // ---------- state & rendering ----------
 let mode='quiz',level=1,history=[],cursor=0,total=0,firstCorrect=0,completed=0,mistakes=[];
 try{const s=JSON.parse(localStorage.getItem('algebraStudio')||'{}');if(MODES.some(m=>m.id===s.mode))mode=s.mode;if([1,2,3].includes(s.level))level=s.level;}catch(e){}
-const save=()=>{try{localStorage.setItem('algebraStudio',JSON.stringify({mode,level}));}catch(e){}};
+let kbOn=matchMedia('(pointer:coarse)').matches,kbIdx=0;
+try{const k=JSON.parse(localStorage.getItem('algebraStudio')||'{}').kb;if(typeof k==='boolean')kbOn=k;}catch(e){}
+const save=()=>{try{localStorage.setItem('algebraStudio',JSON.stringify({mode,level,kb:kbOn}));}catch(e){}};
 const S=()=>history[cursor];
-const newState=q=>({q,values:q.fields.map(()=>''),pts:[],ok:q.fields.map(()=>false),bad:q.fields.map(()=>false),hints:0,attempted:false,done:false,assisted:false,work:'',feedback:'',fclass:'feedback',sol:false,solAll:false});
+const newState=q=>({q,values:q.fields.map(()=>''),latex:q.fields.map(()=>''),pts:[],ok:q.fields.map(()=>false),bad:q.fields.map(()=>false),hints:0,attempted:false,done:false,assisted:false,work:'',feedback:'',fclass:'feedback',sol:false,solAll:false});
 
 function renderModes(){let html='',open=false;for(const m of MODES){if(m.group){if(open)html+='</div>';html+=`<div class="group">${m.group}</div><div class="modes">`;open=true;}
  html+=`<button class="mode${m.star?' star':''}${m.id===mode?' active':''}" data-mode="${m.id}"><i>${m.icon}</i><span>${m.name}<small>${m.desc}</small></span></button>`;}
@@ -424,25 +439,86 @@ function renderGraphField(i){const st=S(),f=st.q.fields[i],box=$('g'+i);if(!box)
   st.bad[i]=false;if(st.feedback&&!st.done){st.feedback='';$('feedback').innerHTML='';}$('gp'+i).textContent=st.pts.length?'Your points: '+st.pts.map(q=>pt(q.x,q.y)).join(', '):'Tap or click a grid point to place it.';box.parentElement.classList.remove('bad');renderGraphField(i);});}
 
 function renderFields(st){const q=st.q,multi=q.fields.length>1,box=$('fields');
+ // MathLive remembers the last focused field globally; release it before the element is removed, or the next focus() throws.
+ box.querySelectorAll('math-field').forEach(m=>{try{m.blur();const inner=m._mathfield;if(inner&&inner.hasFocus())inner.onBlur({dispatchEvents:false});}catch(e){}});
  box.innerHTML=q.fields.map((f,i)=>{const cls='field'+(st.ok[i]?' good':st.bad[i]?' bad':''),dis=st.ok[i]||st.done?' disabled':'',val=escapeText(st.values[i]).replaceAll('"','&quot;');
   const head=(multi||f.label)?`<div class="flabel">${multi?`<span class="part">${'abcdefg'[i]}</span>`:''}<span>${f.label||(f.kind==='eq'?'Your equation':'Your answer')}</span></div>`:'';
   if(f.kind==='num')return `<div class="${cls}">${head}<div class="inrow"><span class="pre">${(f.pre||'').replace('$','<span class="cur">$</span>')}</span><input id="f${i}" data-i="${i}" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="${f.undef?'number, fraction, or “undefined”':'number or fraction'}" value="${val}"${dis}></div></div>`;
   if(f.kind==='eq')return `<div class="${cls}">${head}<input id="f${i}" data-i="${i}" placeholder="${f.placeholder||'y = mx + b'}" value="${val}" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="done"${dis}><div class="preview" id="pv${i}"></div></div>`;
   if(f.kind==='choice')return `<div class="${cls} flat"><div class="choices" id="ch${i}">${f.options.map((o,k)=>`<button type="button" class="choice${st.values[i]===o?' selected':''}" data-k="${k}" aria-pressed="${st.values[i]===o}"${dis}>${mathMarkup(o)}</button>`).join('')}</div></div>`;
   return `<div class="${cls} flat">${head}<div id="g${i}"></div><div class="gtools"><span id="gp${i}">${st.pts.length?'Your points: '+st.pts.map(q=>pt(q.x,q.y)).join(', '):'Tap or click a grid point to place it.'}</span><button type="button" data-clear="${i}"${dis}>Clear points</button></div></div>`;}).join('');
- if(!multi&&q.fields[0].kind==='eq')box.insertAdjacentHTML('beforeend','<p class="help" style="margin-top:-8px">Type fractions with “/”: <b>y = -3/2x + 4</b>. Write negatives with “-”.</p>');
- box.querySelectorAll('input').forEach(inp=>{const i=Number(inp.dataset.i);const pv=()=>{const p=$('pv'+i);if(!p)return;try{p.innerHTML=inp.value.trim()?mathMarkup(inp.value.replace(/ℓ/g,'l')):'';}catch(e){p.innerHTML='';}};pv();
+ if(!multi&&q.fields[0].kind==='eq')box.insertAdjacentHTML('beforeend',ML?'<p class="help" style="margin-top:-8px">Press <b>/</b> to make a fraction, then <b>→</b> to leave it. Example: y = −3/2 x + 4.</p>':'<p class="help" style="margin-top:-8px">Type fractions with “/”: <b>y = -3/2x + 4</b>. Write negatives with “-”.</p>');
+ box.querySelectorAll('input').forEach(inp=>{const i=Number(inp.dataset.i);inp.addEventListener('focus',()=>{kbIdx=i;renderKeypad(st);});const pv=()=>{const p=$('pv'+i);if(!p)return;try{p.innerHTML=inp.value.trim()?mathMarkup(inp.value.replace(/ℓ/g,'l')):'';}catch(e){p.innerHTML='';}};pv();
   inp.oninput=()=>{st.values[i]=inp.value;if(st.bad[i]){st.bad[i]=false;inp.closest('.field').classList.remove('bad');}pv();};});
  q.fields.forEach((f,i)=>{if(f.kind==='choice')$('ch'+i).querySelectorAll('.choice').forEach(b=>b.onclick=()=>{st.values[i]=f.options[Number(b.dataset.k)];$('ch'+i).querySelectorAll('.choice').forEach(z=>{const on=z===b;z.classList.toggle('selected',on);z.setAttribute('aria-pressed',String(on));});});
-  if(f.kind==='graph'){renderGraphField(i);box.querySelector(`[data-clear="${i}"]`).onclick=()=>{st.pts=[];$('gp'+i).textContent='Tap or click a grid point to place it.';renderGraphField(i);};}});}
+  if(f.kind==='graph'){renderGraphField(i);box.querySelector(`[data-clear="${i}"]`).onclick=()=>{st.pts=[];$('gp'+i).textContent='Tap or click a grid point to place it.';renderGraphField(i);};}});
+ if(ML)box.querySelectorAll('input').forEach(inp=>upgradeInput(st,inp));}
+
+// ---------- MathLive math fields (stacked fractions); plain inputs remain as the fallback ----------
+let ML=false;
+function latexToText(tex){
+ const s=tex.replace(/\\left|\\right/g,'').replace(/\\[,;:! ]|~/g,'').replace(/\\(cdot|times)/g,'*').replace(/\\div/g,'/').replace(/\\placeholder(\{\})?/g,'').replace(/\\(mathrm|text|operatorname|mathit)\{([^{}]*)\}/g,'$2');
+ const arg=(t,i)=>{while(t[i]===' ')i++;if(t[i]!=='{')return [t[i]||'',i+1];let d=0;for(let j=i;j<t.length;j++){if(t[j]==='{')d++;else if(t[j]==='}'&&!--d)return [t.slice(i+1,j),j+1];}return [t.slice(i+1),t.length];};
+ const conv=t=>{let out='';for(let i=0;i<t.length;){const m=t.slice(i).match(/^\\[dt]?frac/);
+  if(m){let a,b;[a,i]=arg(t,i+m[0].length);[b,i]=arg(t,i);a=conv(a);b=conv(b);const simple=/^-?(\d+\.?\d*|\.\d+)$/;out+=simple.test(a)&&simple.test(b)?`${a}/${b}`:`((${a})/(${b}))`;}
+  else if(t[i]==='{'||t[i]==='}')i++;else out+=t[i++];}return out;};
+ return conv(s).replace(/\s+/g,'');}
+function upgradeInput(st,inp){const i=Number(inp.dataset.i),f=st.q.fields[i],mf=new MathfieldElement();
+ mf.id=inp.id;mf.dataset.i=i;mf.setAttribute('math-virtual-keyboard-policy','manual');mf.setAttribute('smart-fence','false');if(inp.disabled)mf.setAttribute('read-only','');
+ mf.setAttribute('placeholder','\\text{'+(f.kind==='eq'?(f.placeholder||'y = mx + b'):'number or fraction')+'}');
+ inp.replaceWith(mf);try{mf.inlineShortcuts={};}catch(e){}mf.value=st.latex[i]||st.values[i]||'';const pv=$('pv'+i);if(pv)pv.remove();
+ mf._sync=()=>{st.latex[i]=mf.value;st.values[i]=latexToText(mf.value);if(st.bad[i]){st.bad[i]=false;mf.closest('.field').classList.remove('bad');}};
+ mf.addEventListener('input',mf._sync);mf.addEventListener('focus',()=>{kbIdx=i;renderKeypad(st);});
+ mf.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();e.stopPropagation();$('form').requestSubmit();}},{capture:true});}
+const mfTextarea=el=>el.shadowRoot&&el.shadowRoot.querySelector('.ML__keyboard-sink,textarea');
 
 function renderSolution(st){$('solution').hidden=!st.sol;if(!st.sol)return;$('solutionTitle').textContent=st.solAll?'Step-by-step solution':`Hint ${st.hints} of ${st.q.steps.length}`;
  $('steps').innerHTML=st.q.steps.slice(0,st.hints).map((s,i)=>`<p>${i+1}. ${rich(s)}</p>`).join('');}
 
+// ---------- on-screen math keyboard ----------
+const touch=matchMedia('(pointer:coarse)').matches;
+function kbInputs(st){return st.q.fields.map((f,i)=>({f,i,el:$('f'+i)})).filter(o=>o.el&&!o.el.disabled&&!o.el.readOnly);}
+function kbTarget(st){const list=kbInputs(st);return list.find(o=>o.i===kbIdx)||list[0];}
+function renderKeypad(st){const box=$('keypad'),list=kbInputs(st);
+ if(!list.length||st.done){box.innerHTML='';document.body.classList.remove('kb-open');return;}
+ list.forEach(o=>{const mode=kbOn&&touch?'none':o.f.kind==='num'?'decimal':'text',ta=o.el.tagName==='MATH-FIELD'?mfTextarea(o.el):o.el;if(ta)ta.inputMode=mode;});
+ if(!kbOn){box.className='';box.innerHTML='<button type="button" class="kbtoggle" data-k="on">⌨ Show math keyboard</button>';document.body.classList.remove('kb-open');bindKeys(st);return;}
+ const t=kbTarget(st),f=t.f,eq=f.kind==='eq',vars=f.vars||{x:'x',y:'y'},multi=st.q.fields.length>1;
+ const K=(label,k,cls='',dis=false)=>`<button type="button" class="${cls}" data-k="${escapeText(k)}"${dis?' disabled':''} aria-label="${escapeText(k)}">${label}</button>`;
+ const v1=eq?K(vars.x,vars.x,'v'):f.undef?K('undef','undefined','fn sm'):K('<var>x</var>','','v',true);
+ const v2=eq?K(vars.y,vars.y,'v'):K('<var>y</var>','','v',true);
+ box.className='keypad';
+ box.innerHTML=`<div class="kbar"><span>Math keyboard${multi?` · part ${'abcdefg'[t.i]}`:''}</span><span>${multi?K('Next part ↓','next'):''}${K('Hide','off')}</span></div><div class="keys">
+ ${K('7','7')}${K('8','8')}${K('9','9')}${K('/','/','fn')}${K('(','(','fn')}${K(')',')','fn')}
+ ${K('4','4')}${K('5','5')}${K('6','6')}${v1}${v2}${K('⌫','back','fn')}
+ ${K('1','1')}${K('2','2')}${K('3','3')}${K('−','-','fn')}${K('+','+','fn',!eq)}${K('=','=','fn',!eq)}
+ ${K('0','0')}${K('.','.')}${K('←','left','fn')}${K('→','right','fn')}${K('Clear','clear','fn sm')}${K('✓','check','ok')}</div>`;
+ document.body.classList.add('kb-open');bindKeys(st);}
+function bindKeys(st){$('keypad').querySelectorAll('button').forEach(b=>{b.addEventListener('pointerdown',e=>e.preventDefault());b.onclick=()=>kbPress(st,b.dataset.k);});}
+function kbPress(st,k){
+ if(k==='on'||k==='off'){kbOn=k==='on';save();renderKeypad(st);if(kbOn){const t=kbTarget(st);t&&t.el.focus({preventScroll:true});}return;}
+ if(k==='check'){$('form').requestSubmit();return;}
+ const list=kbInputs(st);if(k==='next'){const j=list.findIndex(o=>o.i===kbIdx);const n=list[(j+1)%list.length];kbIdx=n.i;n.el.focus({preventScroll:true});n.el.scrollIntoView({block:'nearest',behavior:'smooth'});renderKeypad(st);return;}
+ const t=kbTarget(st);if(!t)return;const inp=t.el;
+ if(inp.tagName==='MATH-FIELD'){if(document.activeElement!==inp)inp.focus({preventScroll:true});
+  const cmd={back:'deleteBackward',left:'moveToPreviousChar',right:'moveToNextChar'}[k];
+  if(cmd)inp.executeCommand(cmd);else if(k==='clear')inp.value='';else if(k==='undefined')inp.value='\\mathrm{undefined}';
+  else inp.executeCommand(['insert',k==='/'?'\\frac{#@}{#?}':k]);
+  inp._sync();return;}
+ if(document.activeElement!==inp){inp.focus({preventScroll:true});inp.setSelectionRange(inp.value.length,inp.value.length);}
+ const a=inp.selectionStart??inp.value.length,b=inp.selectionEnd??a;
+ if(k==='left')inp.setSelectionRange(Math.max(0,a-1),Math.max(0,a-1));
+ else if(k==='right')inp.setSelectionRange(Math.min(inp.value.length,b+1),Math.min(inp.value.length,b+1));
+ else{if(k==='back'){if(a!==b)inp.setRangeText('',a,b,'end');else if(a>0)inp.setRangeText('',a-1,a,'end');}
+  else if(k==='clear')inp.value='';
+  else if(k==='undefined')inp.value='undefined';
+  else inp.setRangeText(k,a,b,'end');
+  inp.dispatchEvent(new Event('input'));}}
+
 function render(){const st=S(),q=st.q;
  $('number').textContent='QUESTION '+String(cursor+1).padStart(2,'0');$('topic').textContent=q.label;
  $('prompt').innerHTML=rich(q.prompt);$('condition').innerHTML=rich(q.condition||'');$('condition').hidden=!q.condition;
- renderDisplay(st);renderFields(st);$('work').value=st.work;
+ renderDisplay(st);renderFields(st);renderKeypad(st);$('work').value=st.work;
  $('feedback').innerHTML=st.feedback;$('feedback').className=st.fclass;renderSolution(st);
  $('check').disabled=st.done;$('hint').disabled=st.hints>=q.steps.length;$('show').disabled=st.solAll;
  $('previous').disabled=cursor<=0;$('next').disabled=cursor>=history.length-1;$('position').textContent=(cursor+1)+' / '+history.length;
@@ -453,7 +529,7 @@ function addMistake(st){if(!mistakes.includes(st))mistakes.push(st);}
 
 function fresh(){const items=[],keys=new Set();
  for(let t=0;items.length<10&&t<3000;t++){const g=mode==='quiz'?QUIZ[items.length]:MODES.find(m=>m.id===mode).gen;const q=g(level);if(keys.has(q.key))continue;keys.add(q.key);items.push(q);}
- history=items.map(newState);cursor=0;total=0;firstCorrect=0;completed=0;mistakes=[];render();}
+ history=items.map(newState);cursor=0;kbIdx=0;total=0;firstCorrect=0;completed=0;mistakes=[];render();}
 
 $('form').onsubmit=ev=>{ev.preventDefault();const st=S();if(st.done)return;
  const res=st.q.fields.map((f,i)=>st.ok[i]?{ok:true}:evalField(f,st,i));
@@ -471,10 +547,13 @@ const reveal=id=>requestAnimationFrame(()=>$(id).scrollIntoView({block:'nearest'
 function openSteps(all){const st=S();st.assisted=true;addMistake(st);st.sol=true;st.hints=all?st.q.steps.length:Math.min(st.hints+1,st.q.steps.length);if(all||st.hints===st.q.steps.length)st.solAll=all||st.solAll;st.work=$('work').value;render();reveal('solution');}
 $('hint').onclick=()=>openSteps(false);$('show').onclick=()=>openSteps(true);
 $('work').oninput=()=>{S().work=$('work').value;};
-const go=i=>{if(i<0||i>=history.length)return;S().work=$('work').value;cursor=i;render();window.scrollTo({top:Math.min(window.scrollY,$('number').getBoundingClientRect().top+window.scrollY-16),behavior:'smooth'});};
+const go=i=>{if(i<0||i>=history.length)return;S().work=$('work').value;cursor=i;kbIdx=0;render();window.scrollTo({top:Math.min(window.scrollY,$('number').getBoundingClientRect().top+window.scrollY-16),behavior:'smooth'});};
 $('previous').onclick=()=>go(cursor-1);$('next').onclick=()=>go(cursor+1);
 $('review').onclick=()=>{if(!mistakes.length)return;const idx=mistakes.map(m=>history.indexOf(m)).filter(i=>i>=0).sort((a,b)=>a-b);go(idx.find(i=>i>cursor)??idx[0]);};
 $('newset').onclick=fresh;
 document.querySelectorAll('#levels button').forEach(b=>b.onclick=()=>{level=Number(b.dataset.level);save();renderModes();fresh();});
 renderModes();fresh();
-</script></body></html>
+if(window.customElements)customElements.whenDefined('math-field').then(()=>{try{MathfieldElement.soundsDirectory=null;MathfieldElement.fontsDirectory='https://cdn.jsdelivr.net/npm/mathlive@0.110.0/fonts';}catch(e){}ML=true;const st=S();st.work=$('work').value;render();});
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathlive@0.110.0/mathlive.min.js"></script>
+</body></html>
